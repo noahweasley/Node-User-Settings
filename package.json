@@ -1,0 +1,17 @@
+{
+  "name": "node-sync",
+  "version": "0.1.0",
+  "description": "A simple promise based node settings library, but originally built to work with Electron.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "settings",
+    "node",
+    "sync",
+    "electron"
+  ],
+  "author": "Noahweasley",
+  "license": "ISC"
+}

@@ -1,0 +1,1 @@
+A simple promise based node settings library, but originally built to work with Electron.js
