@@ -13,8 +13,7 @@ function checkArgs(...args) {
   });
 }
 
-// read the preference file from disk and then return an object representation
-// of the file
+// read the preference file from disk and then return an object representation of the file
 async function getPreferences(prefFileName) {
   checkArgs(prefFileName);
   let fileName = prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
@@ -67,7 +66,7 @@ async function setPreferences(pref, prefFileName) {
 
 /**
  * Setup settings API before use
- * 
+ *
  * @param {*} arg the setup object
  */
 module.exports.initialize = function (arg) {
@@ -100,14 +99,14 @@ module.exports.hasKey = async function (key, prefFileName) {
  * @param {*} key the key in settings in which it's value would be retrieved
  * @param {*} defaultValue the default value to be retrieved if that key has never been set
  */
-module.exports.getStateSync = async function (key, defaultValue, prefFileName) {
+async function getStateSync(key, defaultValue, prefFileName) {
   checkArgs(key, prefFileName);
   // first check if key exists
   if (this.hasKey(key, prefFileName)) {
     const dataOB = await getPreferences(prefFileName);
     return `${dataOB[`${key}`]}`;
   } else return `${defaultValue}`;
-};
+}
 
 /**
  * Retrieves the state of a user preference using a key-value pair
@@ -167,12 +166,12 @@ module.exports.getStates = async function (states, prefFileName) {
  * @param {*} key the key in settings in which it's value would be retrieved
  * @param {*} value the value to be set
  */
-module.exports.setStateSync = async function (key, value, prefFileName) {
+async function setStateSync(key, value, prefFileName) {
   checkArgs(key, prefFileName);
   let pref = await getPreferences(prefFileName);
   pref[`${key}`] = `${value}`;
   return setPreferences(pref);
-};
+}
 
 /**
  * Sets the state of a user preference using a key-value pair
