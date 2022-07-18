@@ -2,7 +2,7 @@
 
 ## A simple promise based node settings library, but originally built to work with Electron.js
 
-## Installation and Usage
+## Installation and API Usage
 
 ### Installation
 
@@ -11,7 +11,7 @@ npm i node-user-settings --save
 
 ```
 
-### Usage Examples
+### API Usage Examples
 
 ```javascript
 
