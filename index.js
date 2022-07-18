@@ -221,7 +221,7 @@ module.exports.setState = async function (key, value, prefFileName) {
  * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
  *                     the default file would be used
  * @param states an object representing the states to be synched
- * @returns the
+ * @returns the number of staes that was saved
  */
 module.exports.setStates = function (states, prefFileName) {
   return new Promise(async (resolve, reject) => {
