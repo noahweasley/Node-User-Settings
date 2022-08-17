@@ -1,6 +1,6 @@
 {
   "name": "node-user-settings",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple promise based node settings library, but originally built to work with Electron.js",
   "main": "index.js",
   "scripts": {
