@@ -360,5 +360,5 @@ module.exports = function (config) {
     return setPreferencesSync(pref);
   }
 
-  return { getDefaultPreferenceFilePath, getState, getStates, setState, setStates };
+  return { getDefaultPreferenceFilePath, getState, getStates, setState, setStates, deleteKey, hasKey };
 };
