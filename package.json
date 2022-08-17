@@ -1,10 +1,10 @@
 {
   "name": "node-user-settings",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple promise based node settings library, but originally built to work with Electron.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test"
   },
   "keywords": [
     "settings",
