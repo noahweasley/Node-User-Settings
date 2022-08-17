@@ -12,6 +12,7 @@
     "sync",
     "electron"
   ],
+  "repository": "https://github.com/noahweasley/Node-User-Settings",
   "author": "Noahweasley",
   "license": "MIT"
 }
