@@ -15,12 +15,8 @@ npm i node-user-settings --save
 
 ```javascript
 
-const Settings = require('node-user-settings')
-
-// initialize save directory
-
-Settings.initialize({
-  dir: 'path/to/save/settings',
+const Settings = require('node-user-settings')({
+  preferenceFileDir: 'path/to/save/settings'
 })
 
 // get a value
@@ -45,12 +41,12 @@ let [value1, value2, value3] = await Settings.getStates([
   'key3',
 ])
 
-// to use settings and run them in parallel, it's better to use this version
+// to use settings and run them in parallel, it's better to use this version but I have no idea what would happen if you do use it :)
+
 let [res1, res2] = await Promise.all([
   Settings.setState('key', value),
   Settings.setState('key', value),
 ])
-
 ```
 
 More features are to be added soon, features like the synchronous versions of the API and the callback based style
