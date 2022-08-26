@@ -1,10 +1,10 @@
 {
   "name": "node-user-settings",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "A simple promise based node settings library, but originally built to work with Electron.js",
   "main": "index.js",
   "scripts": {
-    "test": "node test"
+    "test": "jest"
   },
   "keywords": [
     "settings",
@@ -14,5 +14,12 @@
   ],
   "repository": "https://github.com/noahweasley/Node-User-Settings",
   "author": "Noahweasley",
-  "license": "MIT"
+  "license": "MIT",
+  "funding": {
+    "type": "buymeacoffee",
+    "url": "https://www.buymeacofee.com/noahweasley"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
 }
