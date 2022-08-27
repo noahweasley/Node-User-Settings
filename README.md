@@ -1,6 +1,6 @@
 # Node User Settings
 
-### A simple promise based node settings library, but originally built to work with Electron.js
+### A simple promise based node settings library, but originally built to work with Electron.js. Synchronous version of the API is also available.
 
 ## Installation and API Usage
 
@@ -82,4 +82,8 @@ await Settings.deserialize(optionalFileName);
 
 ```
 
-More features are to be added soon, features like the callback based style
+## Contributing
+
+### Setting things up
+
+`npm install && npm test`
