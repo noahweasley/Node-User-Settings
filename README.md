@@ -28,7 +28,7 @@ npm i node-user-settings --save
 
 const Settings = require('node-user-settings')({
   preferenceFileDir: 'path/to/save/settings',
-  preferenceFileName: 'Settings'
+  preferenceFileName: 'Settings.json'
 })
 
 // get a value,  asynchronously 
