@@ -66,11 +66,11 @@ let [res1, res2] = await Promise.all([
 
 // asynchronously checks if a key exists
 
- await settings.hasKey("moduleName", OPTIONAL_FILENAME);
+ await settings.hasKey("key", OPTIONAL_FILENAME);
  
  // asynchronously deletes a single key
  
-  await settings.deleteKey("moduleName", OPTIONAL_FILENAME);
+  await settings.deleteKey("key", OPTIONAL_FILENAME);
   
 // you could also delete the whole file if you like
   
@@ -84,6 +84,4 @@ await Settings.deserialize(optionalFileName);
 
 ## Contributing
 
-### Setting things up
-
-`npm install && npm test`
+Clone the repository and run `npm install && npm test`
