@@ -1,10 +1,12 @@
 {
   "name": "node-user-settings",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A simple promise based node settings library, but originally built to work with Electron.js",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "debug": "jest --detectOpenHandles --forceExit",
+    "clear": "jest --clearCache"
   },
   "keywords": [
     "settings",

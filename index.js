@@ -37,14 +37,24 @@ const fs = require("fs");
 module.exports = function (config) {
   // defaults
   const DEFAULTS = Object.freeze({
-    preferenceFileName: "Settings.json"
+    preferenceFileName: "Settings.json",
+    fileName: "Settings",
+    fileExt: "json"
   });
 
-  let { preferenceFileDir, preferenceFileName } = config;
+  let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
+
+  // preferenceFileName is deprecated to enable custom file extensions
+
+  if (preferenceFileName) {
+    console.warn("preferenceFileName option is deprecated, please refer to the docs");
+  }
+
+  let i = fileName && fileExt; // if filename and extension was provided
 
   defPreferenceFilePath = path.join(
     preferenceFileDir,
-    preferenceFileName ? preferenceFileName : DEFAULTS.preferenceFileName
+    preferenceFileName ? preferenceFileName : i ? `${fileName}.${fileExt}` : DEFAULTS.preferenceFileName
   );
 
   // check arguments so that there is no error thrown at runtime; synchronously

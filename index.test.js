@@ -2,7 +2,8 @@ const { describe, expect, test, afterEach, beforeEach } = require("@jest/globals
 
 const settings = require("./index")({
   preferenceFileDir: "C:\\Users\\Noah\\Desktop",
-  preferenceFileName: "Settings.json"
+  fileName: "Settings",
+  fileExt: "json" 
 });
 
 const OPTIONAL_FILENAME = "UserSettings.json";

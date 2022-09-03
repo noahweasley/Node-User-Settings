@@ -16,20 +16,25 @@ npm i node-user-settings --save
 
 ### Please Note
 
-* you can specify an optional filename in which settings would be saved or retrieved by using the last arguments in each of the stated functions
+* You can specify an optional filename in which settings would be saved or retrieved by using the last arguments in each of the stated functions
 
-* adding a sync as suffix to each functions, provides you with the synchronous version
+* Adding a sync as suffix to each functions, provides you with the synchronous version
 
-* the last argument would always be an optional filename. A new file would be created after using the third argument
+* The last argument would always be an optional filename. A new file would be created after using the third argument
+
+* `preferenceFileName` and <preferenceFileDir> are now deprecated as of v1.1.0 and you should use, fileName and fileExt instead to set the file name to be used to save settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using < preferenceFileName > for future versions, because it would be removed soon.
 
 ```javascript
 
 // preferenceFileName is optional, it defaults to a Settings.json file
-
+  
 const Settings = require('node-user-settings')({
   preferenceFileDir: 'path/to/save/settings',
-  preferenceFileName: 'Settings.json'
+  preferenceFileName: 'Settings.json',
+  fileName: 'Settings',
+  fileExt: 'json'
 })
+
 
 // get a value,  asynchronously 
 
@@ -81,7 +86,3 @@ let [res1, res2] = await Promise.all([
 await Settings.deserialize(optionalFileName);
 
 ```
-
-## Contributing
-
-Clone the repository and run `npm install && npm test`
