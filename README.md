@@ -22,7 +22,7 @@ npm i node-user-settings --save
 
 * The last argument would always be an optional filename. A new file would be created after using the third argument
 
-* `preferenceFileName` and <preferenceFileDir> are now deprecated as of v1.1.0 and you should use, fileName and fileExt instead to set the file name to be used to save settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using < preferenceFileName > for future versions, because it would be removed soon.
+* `preferenceFileName` is now deprecated as of v1.1.0 and you should use, fileName and fileExt instead to set the file name to be used to save settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using `preferenceFileName` for future versions, because it would be removed soon.
 
 ```javascript
 
