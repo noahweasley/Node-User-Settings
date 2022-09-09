@@ -16,13 +16,16 @@ npm i node-user-settings --save
 
 ### Please Note
 
-* You can specify an optional filename in which settings would be saved or retrieved by using the last arguments in each of the stated functions
+* You can specify an optional filename in which settings would be saved or retrieved by using the last arguments in each of the stated functions. An optional filename isn't required and can be left blank.
 
 * Adding a sync as suffix to each functions, provides you with the synchronous version
 
 * The last argument would always be an optional filename. A new file would be created after using the third argument
 
-* `preferenceFileName` is now deprecated as of v1.1.0 and you should use, fileName and fileExt instead to set the file name to be used to save settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using `preferenceFileName` for future versions, because it would be removed soon.
+* `preferenceFileName` is now deprecated as of v1.1.0 and you should use, `fileName` and `fileExt` instead to set the file name to be used to save settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using `preferenceFileName` for future versions, because it would be removed soon.
+
+* Leaving `fileExt` config option blank but setting a `fileName`, results in a file with the `.json` file extention.
+
 
 ```javascript
 
@@ -71,15 +74,15 @@ let [res1, res2] = await Promise.all([
 
 // asynchronously checks if a key exists
 
- await settings.hasKey("key", OPTIONAL_FILENAME);
+ await settings.hasKey("key", optionalFileName);
  
  // asynchronously deletes a single key
  
-  await settings.deleteKey("key", OPTIONAL_FILENAME);
+  await settings.deleteKey("key", optionalFileName);
   
 // you could also delete the whole file if you like
   
-  await settings.deleteFile(OPTIONAL_FILENAME);
+  await settings.deleteFile(optionalFileName);
    
 // asynchronously get the whole object as it was persisted on disk
 
