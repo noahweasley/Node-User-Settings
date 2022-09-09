@@ -50,11 +50,8 @@ module.exports = function (config) {
     console.warn("preferenceFileName option is deprecated, please refer to the docs");
   }
 
-  let i = fileName && fileExt; // if filename and extension was provided
-
   defPreferenceFilePath = path.join(
-    preferenceFileDir,
-    preferenceFileName ? preferenceFileName : i ? `${fileName}.${fileExt}` : DEFAULTS.preferenceFileName
+    preferenceFileDir, preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || DEFAULTS.fileExt}`
   );
 
   // check arguments so that there is no error thrown at runtime; synchronously
