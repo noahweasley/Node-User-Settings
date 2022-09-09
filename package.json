@@ -1,7 +1,7 @@
 {
   "name": "node-user-settings",
-  "version": "1.1.1",
-  "description": "A simple promise based node settings library, but originally built to work with Electron.js",
+  "version": "1.1.2",
+  "description": "A universal but simple node library to implement user settings, but originally built to work with Electron.js",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "funding": {
     "type": "buymeacoffee",
-    "url": "https://www.buymeacofee.com/noahweasley"
+    "url": "https://www.buymeacoffee.com/noahweasley"
   },
   "devDependencies": {
     "jest": "^29.0.0"
