@@ -1,6 +1,6 @@
 # Node User Settings
 
-### A simple promise based node settings library, but originally built to work with Electron.js. Synchronous version of the API is also available.
+### A universal but simple node library to implement user settings, but originally built to work with Electron.js. Synchronous version of the API is also available.
 
 ## Installation and API Usage
 
