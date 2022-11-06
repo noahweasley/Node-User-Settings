@@ -50,7 +50,7 @@ module.exports = function (config) {
     console.warn("preferenceFileName option is deprecated, please refer to the docs");
   }
 
-  defPreferenceFilePath = path.join(
+  const defPreferenceFilePath = path.join(
     preferenceFileDir, preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || DEFAULTS.fileExt}`
   );
 
@@ -234,7 +234,7 @@ module.exports = function (config) {
   }
 
   /**
-   *  asynchronously checks if the key specified by *key* is present in app preference
+   *  asynchronously checks if the key specified by *key* is present
    *
    * @param key the key to check it's existence
    */
@@ -242,15 +242,11 @@ module.exports = function (config) {
     await checkArgsP(key);
     // check if object has property key
     let dataOB = await getPreferences(prefFileName);
-    for (let pref in dataOB) {
-      if (pref === key) return true;
-    }
-
-    return false;
+    return Object.keys(dataOB).includes(key);
   }
 
   /**
-   *  synchronously hecks if the key specified by *key* is present in app preference
+   *  synchronously hecks if the key specified by *key* is present
    *
    * @param key the key to check it's existence
    */
@@ -258,11 +254,7 @@ module.exports = function (config) {
     checkArgs(key);
     // check if object has property key
     let dataOB = getPreferencesSync(prefFileName);
-    for (let pref in dataOB) {
-      if (pref === key) return true;
-    }
-
-    return false;
+    return Object.keys(dataOB).includes(key);
   }
 
   /**
@@ -309,24 +301,18 @@ module.exports = function (config) {
    *                     the default file would be used
    * @param {*} key the key in settings in which it's value would be retrieved
    * @param {*} defaultValue the default value to be retrieved if that key has never been set
-   * @returns a Promises that resolves to the values set previously or just resolves to an empty array
+   * @returns a Promise that resolves to the values set previously or just resolves to an empty array
    */
-  async function getStates(states, prefFileName) {
+  async function getStates(states = [], prefFileName) {
     await checkArgsP(prefFileName);
     return new Promise(async (resolve, reject) => {
       if (!states instanceof Array) {
         reject(new Error("states must be a qualified Array object"));
       }
+
       const dataOB = await getPreferences(prefFileName);
-      let values = [];
-      for (let key of states) {
-        // first check if key exists
-        if (await hasKey(key, prefFileName)) {
-          values.push(`${dataOB[`${key}`]}`);
-        } else {
-          values.push(null);
-        }
-      }
+      let values = states.map(key => `${dataOB[`${key}`]}`);
+
       resolve(values);
     });
   }
@@ -338,7 +324,7 @@ module.exports = function (config) {
    *                     the default file would be used
    * @param {*} key the key in settings in which it's value would be retrieved
    * @param {*} defaultValue the default value to be retrieved if that key has never been set
-   * @returns a Promises that resolves to the values set previously or just resolves to an empty array
+   * @returns a Promise that resolves to the values set previously or just resolves to an empty array
    */
   function getStatesSync(states, prefFileName) {
     checkArgs(prefFileName);
@@ -346,15 +332,8 @@ module.exports = function (config) {
       throw new Error("states must be a qualified Array object");
     }
     const dataOB = getPreferencesSync(prefFileName);
-    let values = [];
-    for (let key of states) {
-      // first check if key exists
-      if (hasKeySync(key, prefFileName)) {
-        values.push(`${dataOB[`${key}`]}`);
-      } else {
-        values.push(null);
-      }
-    }
+    let values = states.map(key => `${dataOB[`${key}`]}`);
+
     return values;
   }
 
@@ -376,7 +355,7 @@ module.exports = function (config) {
 
   /**
    *  asynchronously sets the state of a user preference using a key-value pair
-   * Note: A new key would be created after this request
+   *  Note: A new key would be created after this request
    *
    * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
    *                     the default file would be used
@@ -403,15 +382,11 @@ module.exports = function (config) {
   async function setStates(states, prefFileName) {
     await checkArgsP(prefFileName);
     return new Promise(async (resolve, reject) => {
-      let inserted = [];
       if (!states instanceof Object) {
         reject(new Error("states must be a qualified JSON object"));
       }
       let pref = await getPreferences(prefFileName);
-      Object.keys(states).forEach((key) => {
-        pref[`${key}`] = `${states[`${key}`]}`;
-        inserted.push(pref[`${key}`]);
-      });
+      let inserted = Object.keys(states).map(key => (pref[`${key}`] = `${states[`${key}`]}`))
 
       await setPreferences(pref, prefFileName);
       resolve(inserted);
@@ -427,26 +402,22 @@ module.exports = function (config) {
    * @returns the number of staes that was saved
    */
   function setStatesSync(states, prefFileName) {
-    let inserted = [];
     checkArgs(prefFileName);
     if (!states instanceof Object) {
       throw new Error("states must be a qualified JSON object");
     }
     let pref = getPreferencesSync(prefFileName);
-    Object.keys(states).forEach((key) => {
-      pref[`${key}`] = `${states[`${key}`]}`;
-      inserted.push(pref[`${key}`]);
-    });
+    let inserted = Object.keys(states).map(key => (pref[`${key}`] = `${states[`${key}`]}`))
 
     return setPreferencesSync(pref) ? inserted : [];
   }
 
   /**
- *  asynchronously removes a preference value from settings if it exists
- * Note: Trying to use *getState()* would just return the default arg set
- 
- * @param {*} key the key in settings that would be deleted
- */
+    * asynchronously removes a preference value from settings if it exists
+    * Note: Trying to use *getState()* would just return the default arg set
+    *
+    * @param {*} key the key in settings that would be deleted
+    */
   async function deleteKey(key, prefFileName) {
     await checkArgsP(key, prefFileName);
     let pref = await getPreferences(prefFileName);
@@ -462,11 +433,11 @@ module.exports = function (config) {
   }
 
   /**
- * synchronously removes a preference value from settings if it exists
- * Note: Trying to use *getState()* would just return the default arg set
- 
- * @param {*} key the key in settings that would be deleted
- */
+    * synchronously removes a preference value from settings if it exists
+    * Note: Trying to use *getState()* would just return the default arg set
+    *
+    * @param {*} key the key in settings that would be deleted
+    */
   function deleteKeySync(key, prefFileName) {
     checkArgs(key, prefFileName);
     let pref = getPreferencesSync();
