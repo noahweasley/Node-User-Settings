@@ -1,7 +1,8 @@
 const { describe, expect, test, afterEach, beforeEach } = require("@jest/globals");
+require("dotenv").config();
 
 const settings = require("./index")({
-  preferenceFileDir: "C:\\Users\\Noah\\Desktop",
+  preferenceFileDir: process.env.NODE_USER_SETTINGS_DIRECTORY,
   fileName: "Settings",
   fileExt: "json" 
 });
