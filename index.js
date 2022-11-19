@@ -29,29 +29,25 @@ const path = require("path");
 const fsp = require("fs/promises");
 const fs = require("fs");
 
+const CONSTANTS = require("./pref-constants");
+
 /**
  * @param {*} config the configuration to be used in initialization
  * @returns the required APIs
  */
 module.exports = function (config) {
-  // defaults
-  const DEFAULTS = Object.freeze({
-    preferenceFileName: "Settings.json",
-    fileName: "Settings",
-    fileExt: "json"
-  });
 
   let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
 
   // preferenceFileName is deprecated to enable custom file extensions
 
-  if (preferenceFileName) {
-    console.warn("preferenceFileName option is deprecated, please refer to the docs");
-  }
+  preferenceFileName && console.warn("preferenceFileName option is deprecated, please refer to the docs");
 
-  const defPreferenceFilePath = path.join(
-    preferenceFileDir, preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || DEFAULTS.fileExt}`
-  );
+  const defPreferenceFilePath = path.join(preferenceFileDir, preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || CONSTANTS.fileExt}`);
+
+  const getDefaultPreferenceFilePath = () => defPreferenceFilePath;
+
+  const getPreferenceFilePath = (prefFileName) => prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
 
   // check arguments so that there is no error thrown at runtime; synchronously
   function checkArgs(...args) {
@@ -73,9 +69,34 @@ module.exports = function (config) {
     return Promise.resolve(args.length);
   }
 
-  const getDefaultPreferenceFilePath = () => defPreferenceFilePath;
+  /**
+   * asychronoously replaces the data in the user settings with the one specified by `dataOb`.
+   * A very uselful api for development purposes
+   * 
+   * @param {*} dataOb a JSON object to be persisted 
+   * @param {*} preferenceFileName an optional file name to persist the settings
+   * @returns true if it was persisted
+   */
+  async function serialize(dataOb, preferenceFileName) {
+    return await (setPreferences(dataOb, preferenceFileName));
+  }
 
   /**
+   * synchronously replaces the data in the user settings with the one specified by `dataOb`.
+   * A very uselful api for development purposes
+   * 
+   * @param {*} dataOb a JSON object to be persisted 
+   * @param {*} preferenceFileName an optional file name to persist the settings
+   * @returns true if it was persisted
+   */
+  function serializeSync(dataOb, preferenceFileName) {
+    return setPreferencesSync(dataOb, preferenceFileName);
+  }
+
+  /**
+   * asynchronously gets the data in the user settings. 
+   * A very uselful api for development purposes
+   * 
    * @returns the persisted object as it exists in disk
    */
   async function deserialize(preferenceFileName) {
@@ -83,6 +104,9 @@ module.exports = function (config) {
   }
 
   /**
+   * synchronously gets the data in the user settings. 
+   * A very uselful api for development purposes
+   * 
    * @returns the persisted object as it exist in disk, synchronously
    */
   function deserializeSync(preferenceFileName) {
@@ -90,20 +114,16 @@ module.exports = function (config) {
   }
 
   /**
-   * asynchronously delete a specific settings file or the default, if the preference filename was not specified
+   * asynchronously delete a specific settings file or the default, if the preference filename was not specified.
+   * A very uselful api for development purposes
    *
    * @param preferenceFileName the optional file to be deleted
    */
   async function deleteFile(preferenceFileName) {
-    let file;
-    if (preferenceFileName) {
-      file = path.join(preferenceFileDir, preferenceFileName);
-    } else {
-      file = getDefaultPreferenceFilePath();
-    }
+    let filePath = getPreferenceFilePath(preferenceFileName);
 
     try {
-      return await fsp.unlink(file);
+      return await fsp.unlink(filePath);
     } catch (err) {
       console.warn("error occurred while deleting file", err.message);
     }
@@ -111,20 +131,17 @@ module.exports = function (config) {
   }
 
   /**
-   * synchrounously delete a specific settings file or the default, if the preference filename was not specified
+   * synchrounously delete a specific settings file or the default, if the preference filename was not specified.
+   * A very uselful api for development purposes
    *
    * @param preferenceFileName the optional file to be deleted
    */
   function deleteFileSync(preferenceFileName) {
-    let file;
-    if (preferenceFileName) {
-      file = path.join(preferenceFileDir, preferenceFileName);
-    } else {
-      file = getDefaultPreferenceFilePath();
-    }
+    checkArgs(preferenceFileName);
+    let filePath = getPreferenceFilePath(preferenceFileName);
 
     try {
-      return fs.unlinkSync(file);
+      return fs.unlinkSync(filePath);
     } catch (err) {
       console.warn("error occurred while deleting file", err.message);
       return;
@@ -134,10 +151,10 @@ module.exports = function (config) {
   // asynchronously read the preference file from disk and then return an object representation of the file
   async function getPreferences(prefFileName) {
     await checkArgsP(prefFileName);
-    let fileName = prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+    let filePath = getPreferenceFilePath(preferenceFileName);
 
     try {
-      let data = await fsp.readFile(fileName, "utf8");
+      let data = await fsp.readFile(filePath, "utf8");
       return JSON.parse(data);
     } catch (err) {
       return createPrefFile();
@@ -146,11 +163,11 @@ module.exports = function (config) {
     async function createPrefFile() {
       let filehandle;
       try {
-        filehandle = await fsp.open(fileName, "wx");
+        filehandle = await fsp.open(filePath, "wx");
         await fsp.writeFile(filehandle, "{}");
       } catch (err) {
         if (err.code === "EEXIST") return {};
-        else if (err.code === "ENOENT") createPrefDirectory(fileName);
+        else if (err.code === "ENOENT") createPrefDirectory(filePath);
         else {
           console.log(err.code);
           return {};
@@ -178,21 +195,21 @@ module.exports = function (config) {
   // synchronously read the preference file from disk and then return an object representation of the file
   function getPreferencesSync(prefFileName) {
     checkArgs(prefFileName);
-    let fileName = prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+    let filePath = getPreferenceFilePath(prefFileName);
 
     try {
-      let data = fs.readFileSync(fileName, "utf8");
+      let data = fs.readFileSync(filePath, "utf8");
       return JSON.parse(data);
     } catch (err) {
       return createPrefFileSync();
     }
 
     function createPrefFileSync() {
-      if (fs.existsSync(fileName)) {
-        fs.writeFileSync(fileName, "{}");
+      if (fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, "{}");
         return {};
       } else {
-        return createPrefDirectorySync(fileName);
+        return createPrefDirectorySync(filePath);
       }
 
       function createPrefDirectorySync() {
@@ -202,10 +219,36 @@ module.exports = function (config) {
     }
   }
 
+  function getPreferencesWithCallback(prefFileName, callbackfnc) {
+    checkArgs(prefFileName);
+    let fileName = getPreferenceFilePath(prefFileName);
+
+    fs.readFile(fileName, function (err, data) {
+      if (err) {
+        createPrefFile(() => callbackfnc(err, data));
+      } else {
+        callbackfnc(null, JSON.parse(data));
+      }
+    });
+
+    function createPrefFile(callbackfnc) {
+      fs.open(fileName, "wx", (err, fd) => {
+        if (err) {
+          callbackfnc(err);
+        }
+        else {
+          fs.writeFile(fd, "{}");
+          callbackfnc(null, "{}");
+        }
+      })
+    }
+
+  }
+
   // asynchronously writes to file, the specific pref specified by *pref*
   async function setPreferences(pref, prefFileName) {
     await checkArgsP(pref, prefFileName);
-    let fileName = prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+    let fileName = getPreferenceFilePath(prefFileName);
 
     const preference = JSON.stringify(pref);
     try {
@@ -220,7 +263,7 @@ module.exports = function (config) {
   // synchronously writes to file, the specific pref specified by *pref*
   function setPreferencesSync(pref, prefFileName) {
     checkArgs(pref, prefFileName);
-    let fileName = prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+    let fileName = getPreferenceFilePath(prefFileName);
 
     const preference = JSON.stringify(pref);
     try {
@@ -272,7 +315,10 @@ module.exports = function (config) {
       if (await hasKey(key, prefFileName)) {
         const dataOB = await getPreferences(prefFileName);
         resolve(`${dataOB[`${key}`]}`);
-      } else resolve(`${defaultValue}`);
+      } else {
+        // emit promise based result
+        resolve(`${defaultValue}`);
+      }
     });
   }
 
@@ -313,6 +359,7 @@ module.exports = function (config) {
       let values = states.map(key => `${dataOB[`${key}`]}`);
 
       resolve(values);
+
     });
   }
 
@@ -366,7 +413,10 @@ module.exports = function (config) {
     return new Promise(async (resolve, _reject) => {
       let pref = await getPreferences(prefFileName);
       pref[`${key}`] = `${value}`;
-      resolve(await setPreferences(pref, prefFileName));
+
+      const isPreferenceSet = await setPreferences(pref, prefFileName);
+
+      resolve(isPreferenceSet);
     });
   }
 
@@ -387,8 +437,8 @@ module.exports = function (config) {
       let pref = await getPreferences(prefFileName);
       let inserted = Object.keys(states).map(key => (pref[`${key}`] = `${states[`${key}`]}`))
 
-      await setPreferences(pref, prefFileName);
-      resolve(inserted);
+      const isPreferenceSet = await setPreferences(pref, prefFileName);
+      isPreferenceSet ? resolve(inserted) : reject([]);
     });
   }
 
@@ -465,7 +515,9 @@ module.exports = function (config) {
     deleteKeySync,
     hasKey,
     hasKeySync,
+    serialize,
     deserialize,
+    serializeSync,
     deserializeSync,
     deleteFile,
     deleteFileSync
