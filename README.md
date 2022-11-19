@@ -1,6 +1,12 @@
 # Node User Settings
 
-### A universal but simple node library to implement user settings, but originally built to work with Electron.js. Synchronous version of the API is also available.
+### A universal but simple node library to implement user settings, but originally built to work with Electron.js.
+
+* Synchronous functions
+* Asynchronous functions
+* Callback-based functions
+
+ All of them are available for use !
 
 ## Installation and API Usage
 
@@ -41,15 +47,15 @@ const Settings = require('node-user-settings')({
 
 // get a value,  asynchronously 
 
-await Settings.getState('key', optionalFileName)
+await Settings.getState('key', optionalFileName) // result => {}
 
 // set a key, asynchronously 
 
-await Settings.setState('key', 'value', optionalFileName)
+await Settings.setState('key', 'value', optionalFileName) // result => number 
 
 // use the third argument to specify an optional file name to save the settings
 
-await Settings.setState('key', 'value', optionalFileName)
+await Settings.setState('key', 'value', optionalFileName) // result => number
 
 //  asynchronously set multiple states, but run them sequentially and `states` refers to the number of states saved
 
@@ -58,12 +64,12 @@ let states = {
   key2: value2,
 }
 
-await Settings.setStates(states, optionalFileName)
+await Settings.setStates(states, optionalFileName) // results => []
 
 //  asynchronously get multiple states, but run them sequentially
 
 let states = ['key1', 'key2', 'key3']
-let [value1, value2, value3] = await Settings.getStates(states, optionalFileName)
+let [value1, value2, value3] = await Settings.getStates(states, optionalFileName) // results => []
 
 // to use settings and run them in parallel, it's better to use this version but I have no idea what would happen if you do use it :)
 
@@ -74,18 +80,18 @@ let [res1, res2] = await Promise.all([
 
 // asynchronously checks if a key exists
 
- await settings.hasKey("key", optionalFileName);
+ await settings.hasKey("key", optionalFileName); // results => boolean
  
  // asynchronously deletes a single key
  
-  await settings.deleteKey("key", optionalFileName);
+  await settings.deleteKey("key", optionalFileName); // results => boolean
   
 // you could also delete the whole file if you like
-  
-  await settings.deleteFile(optionalFileName);
+
+  await settings.deleteFile(optionalFileName); // results => boolean
    
 // asynchronously get the whole object as it was persisted on disk
 
-await Settings.deserialize(optionalFileName);
+await Settings.deserialize(optionalFileName); // results => void
 
 ```
