@@ -13,3 +13,5 @@ NODE_USER_SETTINGS_DIRECTORY="path/to/save/settings/file"
 * Open a pull request with your changes to the API
 
 * Wait for a merge 
+
+More features are coming up :rocket:
