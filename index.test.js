@@ -20,7 +20,7 @@ beforeEach(async () => {
   await settings.serialize(mockData, OPTIONAL_FILENAME);
 });
 
-describe("asynchronous settings api tests", () => {
+describe("Promise-based settings api tests", () => {
   test("asynchronously sets a value without optional filename ( returning a promise )", async () => {
     let isSet = await settings.setState("moduleName", "node-user-settings");
     expect(isSet).toBe(true);
@@ -31,9 +31,7 @@ describe("asynchronous settings api tests", () => {
     expect(value).toBe("node-user-settings");
   });
 
-  test("asynchrnousely gets a value without optional filename ( using a callback )", async () => {
-    
-  });
+  test("asynchrnousely gets a value without optional filename ( using a callback )", async () => {});
 
   test("asynchronously sets a value with optional filename ( returning a promise )", async () => {
     let isSet = await settings.setState("moduleName", "node-user-settings", OPTIONAL_FILENAME);
@@ -97,7 +95,7 @@ describe("asynchronous settings api tests", () => {
   });
 });
 
-describe("synchronous settings api tests", () => {
+describe("Synchronous-based settings api tests", () => {
   test("synchronously sets a value without optional filename", () => {
     let isSet = settings.setStateSync("moduleName", "node-user-settings");
     expect(isSet).toBe(true);
@@ -167,5 +165,23 @@ describe("synchronous settings api tests", () => {
   test("synchronously check if a single entry exists with optional filename", async () => {
     let hasKey = settings.hasKeySync("version", OPTIONAL_FILENAME);
     expect(hasKey).toBe(true);
+  });
+});
+
+describe("Callback-based settings api tests", () => {
+  test("asynchronously check if a single entry exists without optional filename", (done) => {
+    settings.hasKey_c("version", null, (err, hasKey) => {
+      expect(err).toBe(null);
+      expect(hasKey).toBe(true);
+      done();
+    });
+  });
+
+  test("asynchronously gets a value, using callbacks without optional filename", (done) => {
+    settings.getState_c("moduleName", null, null, (err, value) => {
+      expect(err).toBe(null);
+      expect(value).toBe("node-user-settings");
+      done();
+    });
   });
 });

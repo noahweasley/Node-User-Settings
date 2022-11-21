@@ -9,10 +9,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
+ *
  **/
 
 "use-strict";
@@ -36,18 +36,21 @@ const CONSTANTS = require("./pref-constants");
  * @returns the required APIs
  */
 module.exports = function (config) {
-
   let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
 
   // preferenceFileName is deprecated to enable custom file extensions
 
   preferenceFileName && console.warn("preferenceFileName option is deprecated, please refer to the docs");
 
-  const defPreferenceFilePath = path.join(preferenceFileDir, preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || CONSTANTS.fileExt}`);
+  const defPreferenceFilePath = path.join(
+    preferenceFileDir,
+    preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || CONSTANTS.fileExt}`
+  );
 
   const getDefaultPreferenceFilePath = () => defPreferenceFilePath;
 
-  const getPreferenceFilePath = (prefFileName) => prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+  const getPreferenceFilePath = (prefFileName) =>
+    prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
 
   // check arguments so that there is no error thrown at runtime; synchronously
   function checkArgs(...args) {
@@ -72,20 +75,20 @@ module.exports = function (config) {
   /**
    * asychronoously replaces the data in the user settings with the one specified by `dataOb`.
    * A very uselful api for development purposes
-   * 
-   * @param {*} dataOb a JSON object to be persisted 
+   *
+   * @param {*} dataOb a JSON object to be persisted
    * @param {*} preferenceFileName an optional file name to persist the settings
    * @returns true if it was persisted
    */
   async function serialize(dataOb, preferenceFileName) {
-    return await (setPreferences(dataOb, preferenceFileName));
+    return await setPreferences(dataOb, preferenceFileName);
   }
 
   /**
    * synchronously replaces the data in the user settings with the one specified by `dataOb`.
    * A very uselful api for development purposes
-   * 
-   * @param {*} dataOb a JSON object to be persisted 
+   *
+   * @param {*} dataOb a JSON object to be persisted
    * @param {*} preferenceFileName an optional file name to persist the settings
    * @returns true if it was persisted
    */
@@ -94,9 +97,9 @@ module.exports = function (config) {
   }
 
   /**
-   * asynchronously gets the data in the user settings. 
+   * asynchronously gets the data in the user settings.
    * A very uselful api for development purposes
-   * 
+   *
    * @returns the persisted object as it exists in disk
    */
   async function deserialize(preferenceFileName) {
@@ -104,9 +107,9 @@ module.exports = function (config) {
   }
 
   /**
-   * synchronously gets the data in the user settings. 
+   * synchronously gets the data in the user settings.
    * A very uselful api for development purposes
-   * 
+   *
    * @returns the persisted object as it exist in disk, synchronously
    */
   function deserializeSync(preferenceFileName) {
@@ -124,9 +127,7 @@ module.exports = function (config) {
 
     try {
       return await fsp.unlink(filePath);
-    } catch (err) {
-      console.warn("error occurred while deleting file", err.message);
-    }
+    } catch (err) {}
     return;
   }
 
@@ -142,10 +143,7 @@ module.exports = function (config) {
 
     try {
       return fs.unlinkSync(filePath);
-    } catch (err) {
-      console.warn("error occurred while deleting file", err.message);
-      return;
-    }
+    } catch (err) {}
   }
 
   // asynchronously read the preference file from disk and then return an object representation of the file
@@ -168,10 +166,7 @@ module.exports = function (config) {
       } catch (err) {
         if (err.code === "EEXIST") return {};
         else if (err.code === "ENOENT") createPrefDirectory(filePath);
-        else {
-          console.log(err.code);
-          return {};
-        }
+        else return {};
       } finally {
         await filehandle?.close();
       }
@@ -182,7 +177,7 @@ module.exports = function (config) {
             recursive: true
           });
         } catch (err) {
-          console.log("Error while creating file directory");
+          // ignored
         } finally {
           return {};
         }
@@ -192,7 +187,7 @@ module.exports = function (config) {
     }
   }
 
-  // synchronously read the preference file from disk and then return an object representation of the file
+  // synchronously reads the preference file from disk and then return an object representation of the file
   function getPreferencesSync(prefFileName) {
     checkArgs(prefFileName);
     let filePath = getPreferenceFilePath(prefFileName);
@@ -209,7 +204,7 @@ module.exports = function (config) {
         fs.writeFileSync(filePath, "{}");
         return {};
       } else {
-        return createPrefDirectorySync(filePath);
+        return createPrefDirectorySync();
       }
 
       function createPrefDirectorySync() {
@@ -219,33 +214,39 @@ module.exports = function (config) {
     }
   }
 
+  // asynchronously reads the preference file from disk and then return an object representation of the file
   function getPreferencesWithCallback(prefFileName, callbackfnc) {
     checkArgs(prefFileName);
-    let fileName = getPreferenceFilePath(prefFileName);
+    let filePath = getPreferenceFilePath(prefFileName);
 
-    fs.readFile(fileName, function (err, data) {
+    fs.readFile(filePath, function (err, data) {
       if (err) {
-        createPrefFile(() => callbackfnc(err, data));
+        return createPrefFile(callbackfnc);
       } else {
-        callbackfnc(null, JSON.parse(data));
+        return callbackfnc(null, JSON.parse(data.toString()));
       }
     });
 
     function createPrefFile(callbackfnc) {
-      fs.open(fileName, "wx", (err, fd) => {
-        if (err) {
-          callbackfnc(err);
+      fs.open(filePath, "wx", (err, fd) => {
+        if (err /** file not found or some other error occurred */) {
+          return createPrefDirectory(fd, callbackfnc);
+        } else {
+          fs.writeFile(fd, "{}", (err) => callbackfnc(err, "{}"));
         }
-        else {
-          fs.writeFile(fd, "{}");
-          callbackfnc(null, "{}");
-        }
-      })
-    }
+      });
 
+      // create file directory
+      function createPrefDirectory(fd, callbackfnc) {
+        fs.mkdir(fd, { recursive: true }, (err) => {
+          callbackfnc(err, {});
+          fd?.close();
+        });
+      }
+    }
   }
 
-  // asynchronously writes to file, the specific pref specified by *pref*
+  // asynchronously writes to file, the JSON object specified by *pref*
   async function setPreferences(pref, prefFileName) {
     await checkArgsP(pref, prefFileName);
     let fileName = getPreferenceFilePath(prefFileName);
@@ -255,24 +256,37 @@ module.exports = function (config) {
       await fsp.writeFile(fileName, preference);
       return true;
     } catch (err) {
-      console.error(`An error occurred while writing file: ${err}`);
       return false;
     }
   }
 
-  // synchronously writes to file, the specific pref specified by *pref*
+  // synchronously writes to file, the JSON object specified by *pref*
   function setPreferencesSync(pref, prefFileName) {
     checkArgs(pref, prefFileName);
     let fileName = getPreferenceFilePath(prefFileName);
-
     const preference = JSON.stringify(pref);
+
     try {
       fs.writeFileSync(fileName, preference);
       return true;
     } catch (err) {
-      console.error(`An error occurred while writing file: ${err}`);
       return false;
     }
+  }
+
+  // asynchrounously writes to file, the JSON object specified by "pref"
+  function setPreferencesWithCallback(pref, prefFileName, callbackfnc) {
+    checkArgs(pref, prefFileName);
+    const filePath = getPreferenceFilePath(prefFileName);
+    const preference = JSON.stringify(pref);
+
+    fs.writeFile(filePath, preference, (err) => {
+      if (err) {
+        callbackfnc(false);
+      } else {
+        return callbackfnc(true);
+      }
+    });
   }
 
   /**
@@ -282,21 +296,32 @@ module.exports = function (config) {
    */
   async function hasKey(key, prefFileName) {
     await checkArgsP(key);
-    // check if object has property key
     let dataOB = await getPreferences(prefFileName);
     return Object.keys(dataOB).includes(key);
   }
 
   /**
-   *  synchronously hecks if the key specified by *key* is present
+   *  synchronously checks if the key specified by *key* is present
    *
    * @param key the key to check it's existence
    */
   function hasKeySync(key, prefFileName) {
     checkArgs(key);
-    // check if object has property key
     let dataOB = getPreferencesSync(prefFileName);
     return Object.keys(dataOB).includes(key);
+  }
+
+  /**
+   * asynchronously checks if the key specified by *key* is present
+   *
+   * @param key the key to check it's existence
+   */
+  function hasKey_c(key, prefFileName, callbackfnc) {
+    checkArgs(key);
+    getPreferencesWithCallback(prefFileName, (err, dataOB) => {
+      if (err) callbackfnc(err);
+      else callbackfnc(null, Object.keys(dataOB).includes(key));
+    });
   }
 
   /**
@@ -340,6 +365,27 @@ module.exports = function (config) {
   }
 
   /**
+   * using callbacks, asynchronously  retrieves the state of a user preference using a key-value pair
+   *
+   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
+   *                     the default file would be used
+   * @param {*} key the key in settings in which it's value would be retrieved
+   * @param {*} defaultValue the default value to be retrieved if that key has never been set
+   * @param {*} callbackfnc a qualified callback method with and error object as first argument and data as the second
+   */
+  function getState_c(key, defaultValue, prefFileName, callbackfnc) {
+    checkArgs(prefFileName);
+
+    hasKey_c(key, prefFileName, (_err1, hasKey) => {
+      if (hasKey) {
+        getPreferencesWithCallback(prefFileName, (_err2, dataOB) => callbackfnc(null, `${dataOB[`${key}`]}`));
+      } else {
+        callbackfnc(null, `${defaultValue}`);
+      }
+    });
+  }
+
+  /**
    *  asynchronously retrieves the state of a user preference using a key-value pair
    *
    * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
@@ -356,10 +402,9 @@ module.exports = function (config) {
       }
 
       const dataOB = await getPreferences(prefFileName);
-      let values = states.map(key => `${dataOB[`${key}`]}`);
+      let values = states.map((key) => `${dataOB[`${key}`]}`);
 
       resolve(values);
-
     });
   }
 
@@ -378,7 +423,7 @@ module.exports = function (config) {
       throw new Error("states must be a qualified Array object");
     }
     const dataOB = getPreferencesSync(prefFileName);
-    let values = states.map(key => `${dataOB[`${key}`]}`);
+    let values = states.map((key) => `${dataOB[`${key}`]}`);
 
     return values;
   }
@@ -435,7 +480,7 @@ module.exports = function (config) {
         reject(new Error("states must be a qualified JSON object"));
       }
       let pref = await getPreferences(prefFileName);
-      let inserted = Object.keys(states).map(key => (pref[`${key}`] = `${states[`${key}`]}`))
+      let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
 
       const isPreferenceSet = await setPreferences(pref, prefFileName);
       isPreferenceSet ? resolve(inserted) : reject([]);
@@ -456,17 +501,17 @@ module.exports = function (config) {
       throw new Error("states must be a qualified JSON object");
     }
     let pref = getPreferencesSync(prefFileName);
-    let inserted = Object.keys(states).map(key => (pref[`${key}`] = `${states[`${key}`]}`))
+    let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
 
     return setPreferencesSync(pref) ? inserted : [];
   }
 
   /**
-    * asynchronously removes a preference value from settings if it exists
-    * Note: Trying to use *getState()* would just return the default arg set
-    *
-    * @param {*} key the key in settings that would be deleted
-    */
+   * asynchronously removes a preference value from settings if it exists
+   * Note: Trying to use *getState()* would just return the default arg set
+   *
+   * @param {*} key the key in settings that would be deleted
+   */
   async function deleteKey(key, prefFileName) {
     await checkArgsP(key, prefFileName);
     let pref = await getPreferences(prefFileName);
@@ -482,11 +527,11 @@ module.exports = function (config) {
   }
 
   /**
-    * synchronously removes a preference value from settings if it exists
-    * Note: Trying to use *getState()* would just return the default arg set
-    *
-    * @param {*} key the key in settings that would be deleted
-    */
+   * synchronously removes a preference value from settings if it exists
+   * Note: Trying to use *getState()* would just return the default arg set
+   *
+   * @param {*} key the key in settings that would be deleted
+   */
   function deleteKeySync(key, prefFileName) {
     checkArgs(key, prefFileName);
     let pref = getPreferencesSync();
@@ -504,6 +549,7 @@ module.exports = function (config) {
   return {
     getDefaultPreferenceFilePath,
     getState,
+    getState_c,
     getStateSync,
     getStates,
     getStatesSync,
@@ -515,6 +561,7 @@ module.exports = function (config) {
     deleteKeySync,
     hasKey,
     hasKeySync,
+    hasKey_c,
     serialize,
     deserialize,
     serializeSync,
