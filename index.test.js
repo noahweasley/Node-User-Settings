@@ -177,6 +177,14 @@ describe("Callback-based settings api tests", () => {
     });
   });
 
+  test("asynchronously check if a single entry exists with optional filename", (done) => {
+    settings.hasKey_c("version", OPTIONAL_FILENAME, (err, hasKey) => {
+      expect(err).toBe(null);
+      expect(hasKey).toBe(true);
+      done();
+    });
+  });
+
   test("asynchronously gets a value, using callbacks without optional filename", (done) => {
     settings.getState_c("moduleName", null, null, (err, value) => {
       expect(err).toBe(null);
@@ -184,4 +192,74 @@ describe("Callback-based settings api tests", () => {
       done();
     });
   });
+
+  test("asynchronously gets a value, using callbacks with optional filename", (done) => {
+    settings.getState_c("moduleName", null, OPTIONAL_FILENAME, (err, value) => {
+      expect(err).toBe(null);
+      expect(value).toBe("node-user-settings");
+      done();
+    });
+  });
+
+  test("asynchronously sets a value without optional filename, using callback", (done) => {
+    settings.setState_c("moduleName", "node-user-settings", null, (err, isSet) => {
+      expect(err).toBe(null);
+      expect(isSet).toBe(true);
+      done();
+    });
+  });
+
+  test("asynchronously sets a value with optional filename, using callback", (done) => {
+    settings.setState_c("moduleName", "node-user-settings", OPTIONAL_FILENAME, (err, isSet) => {
+      expect(err).toBe(null);
+      expect(isSet).toBe(true);
+      done();
+    });
+  });
+
+  test("asynchronously gets multiple values without optional filename, using callback", (done) => {
+    settings.getStates_c(["moduleName", "version", "author"], null, (err, values) => {
+      expect(err).toBe(null);
+      expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
+      done();
+    });
+  });
+
+  test("asynchronously gets multiple values with optional filename, using callback", (done) => {
+    settings.getStates_c(["moduleName", "version", "author"], OPTIONAL_FILENAME, (err, values) => {
+      expect(err).toBe(null);
+      expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
+      done();
+    });
+  });
+
+  test("asynchronously set multiple values without optional filename, using callback", (done) => {
+    const preferenceObjectToPersist = {
+      moduleName: "node-user-settings",
+      version: "1.0.0",
+      author: "noahweasley"
+    };
+
+    settings.setStates_c(preferenceObjectToPersist, null, (err, persisted) => {
+      expect(err).toBe(null);
+      expect(persisted).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
+      done();
+    });
+  });
+
+  test("asynchronously set multiple values with optional filename, using callback", (done) => {
+    const preferenceObjectToPersist = {
+      moduleName: "node-user-settings",
+      version: "1.0.0",
+      author: "noahweasley"
+    };
+
+    settings.setStates_c(preferenceObjectToPersist, OPTIONAL_FILENAME, (err, persisted) => {
+      expect(err).toBe(null);
+      expect(persisted).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
+      done();
+    });
+  });
+
+  //
 });

@@ -49,8 +49,9 @@ module.exports = function (config) {
 
   const getDefaultPreferenceFilePath = () => defPreferenceFilePath;
 
-  const getPreferenceFilePath = (prefFileName) =>
-    prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+  function getPreferenceFilePath(prefFileName) {
+    return prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+  }
 
   // check arguments so that there is no error thrown at runtime; synchronously
   function checkArgs(...args) {
@@ -282,9 +283,9 @@ module.exports = function (config) {
 
     fs.writeFile(filePath, preference, (err) => {
       if (err) {
-        callbackfnc(false);
+        return callbackfnc(err, false);
       } else {
-        return callbackfnc(true);
+        return callbackfnc(null, true);
       }
     });
   }
@@ -409,12 +410,11 @@ module.exports = function (config) {
   }
 
   /**
-   * synchronously  retrieves the state of a user preference using a key-value pair
+   * synchronously  retrieves a list of states in the user preference using keys
    *
    * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
    *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} defaultValue the default value to be retrieved if that key has never been set
+   * @param {*} states the list of states used to retrieve the list of values
    * @returns a Promise that resolves to the values set previously or just resolves to an empty array
    */
   function getStatesSync(states, prefFileName) {
@@ -426,6 +426,28 @@ module.exports = function (config) {
     let values = states.map((key) => `${dataOB[`${key}`]}`);
 
     return values;
+  }
+
+  /**
+   * asynchronously retrieves the states of a user preference using a key-value pair
+   *
+   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
+   *                     the default file would be used
+   * @param {*} states the list of states used to retrieve the list of values
+   * @param {*} callbackfnc a qualified callback function with error as the first argument and the data as the second
+   */
+  function getStates_c(states, prefFileName, callbackfnc) {
+    checkArgs(prefFileName);
+    if (!states instanceof Array) callbackfnc(new Error("states must be a qualified Array object"));
+
+    getPreferencesWithCallback(prefFileName, (err, dataOB) => {
+      if (err) {
+        return callbackfnc(err);
+      } else {
+        let values = states.map((key) => `${dataOB[`${key}`]}`);
+        return callbackfnc(null, values);
+      }
+    });
   }
 
   /**
@@ -462,6 +484,24 @@ module.exports = function (config) {
       const isPreferenceSet = await setPreferences(pref, prefFileName);
 
       resolve(isPreferenceSet);
+    });
+  }
+
+  /**
+   *  asynchronously sets the state of a user preference using a key-value pair, using callbacks
+   *  Note: A new key would be created after this request
+   *
+   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
+   *                     the default file would be used
+   * @param {*} key the key in settings in which it's value would be retrieved
+   * @param {*} value the value to be set
+   */
+  function setState_c(key, value, prefFileName, callbackfnc) {
+    checkArgs(key, prefFileName);
+
+    getPreferencesWithCallback(prefFileName, (_err, pref) => {
+      pref[`${key}`] = `${value}`;
+      setPreferencesWithCallback(pref, prefFileName, callbackfnc);
     });
   }
 
@@ -507,6 +547,37 @@ module.exports = function (config) {
   }
 
   /**
+   * asynchronously sets the states of a user preference using a JSON object containing key-value pairs
+   *
+   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
+   *                     the default file would be used
+   * @param {*} states an object representing the states to be synched
+   * @param {*} callbackfnc a qualified callback function with error as the first argument and the data as the second
+   */
+  function setStates_c(states, prefFileName, callbackfnc) {
+    checkArgs(prefFileName);
+    if (!states instanceof Object) {
+      throw new Error("states must be a qualified JSON object");
+    }
+
+    getPreferencesWithCallback(prefFileName, (err1, pref) => {
+      if (err1) {
+        return callbackfnc(err1);
+      } else {
+        let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
+
+        setPreferencesWithCallback(pref, prefFileName, (err2, isInserted) => {
+          if (isInserted) {
+            callbackfnc(null, inserted);
+          } else {
+            callbackfnc(err2);
+          }
+        });
+      }
+    });
+  }
+
+  /**
    * asynchronously removes a preference value from settings if it exists
    * Note: Trying to use *getState()* would just return the default arg set
    *
@@ -546,17 +617,20 @@ module.exports = function (config) {
     return setPreferencesSync(pref);
   }
 
-  return {
+  const DICTIONARY = Object.freeze({
     getDefaultPreferenceFilePath,
     getState,
     getState_c,
     getStateSync,
     getStates,
     getStatesSync,
+    getStates_c,
     setStateSync,
     setState,
+    setState_c,
     setStates,
     setStatesSync,
+    setStates_c,
     deleteKey,
     deleteKeySync,
     hasKey,
@@ -568,5 +642,7 @@ module.exports = function (config) {
     deserializeSync,
     deleteFile,
     deleteFileSync
-  };
+  });
+
+  return DICTIONARY;
 };
