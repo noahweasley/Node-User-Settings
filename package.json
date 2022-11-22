@@ -1,6 +1,6 @@
 {
   "name": "node-user-settings",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A universal but simple node library to implement user settings, originally built to work with Electron.js",
   "main": "index.js",
   "scripts": {
@@ -13,12 +13,6 @@
     "node",
     "sync",
     "electron"
-  ],
-  "files": [
-    "index.js",
-    "index.d.ts",
-    "mock-data.json",
-    "pref-constants.js"
   ],
   "repository": "https://github.com/noahweasley/Node-User-Settings",
   "author": {
