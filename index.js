@@ -86,6 +86,19 @@ module.exports = function (config) {
   }
 
   /**
+   * asychronoously replaces the data in the user settings with the one specified by `dataOb`.
+   * A very uselful api for development purposes
+   *
+   * @param {*} dataOb a JSON object to be persisted
+   * @param {*} preferenceFileName an optional file name to persist the settings
+   * @param {*} callbackfnc a qualified callback function with an error as the first argument and the second argument as data
+   * @returns true if it was persisted
+   */
+  function serialize_c(dataOb, preferenceFileName, callbackfnc) {
+    setPreferencesWithCallback(dataOb, preferenceFileName, callbackfnc);
+  }
+
+  /**
    * synchronously replaces the data in the user settings with the one specified by `dataOb`.
    * A very uselful api for development purposes
    *
@@ -118,6 +131,15 @@ module.exports = function (config) {
   }
 
   /**
+   * asynchronously gets the data in the user settings.
+   * A very uselful api for development purposes
+   * 
+   */
+  function deserialize_c(preferenceFileName, callbackfnc) {
+    getPreferencesWithCallback(preferenceFileName, callbackfnc);
+  }
+
+  /**
    * asynchronously delete a specific settings file or the default, if the preference filename was not specified.
    * A very uselful api for development purposes
    *
@@ -145,6 +167,19 @@ module.exports = function (config) {
     try {
       return fs.unlinkSync(filePath);
     } catch (err) {}
+  }
+
+  /**
+   * asynchrounously delete a specific settings file or the default, if the preference filename was not specified.
+   * A very uselful api for development purposes
+   *
+   * @param preferenceFileName the optional file to be deleted
+   * @param callbackfnc a qualified callback function with an error as the first argument and the data as the second
+   */
+  function deleteFile_c(preferenceFileName, callbackfnc) {
+    checkArgs(preferenceFileName);
+    let filePath = getPreferenceFilePath(preferenceFileName);
+    fs.unlink(filePath, callbackfnc);
   }
 
   // asynchronously read the preference file from disk and then return an object representation of the file
@@ -617,6 +652,27 @@ module.exports = function (config) {
     return setPreferencesSync(pref);
   }
 
+  /**
+   * asynchronously removes a preference value from settings if it exists
+   * Note: Trying to use *getState()* would just return the default arg set
+   *
+   * @param {*} key the key in settings that would be deleted
+   */
+  function deleteKey_c(key, preferenceFileName, callbackfnc) {
+    checkArgs(key, preferenceFileName);
+
+    getPreferencesWithCallback(preferenceFileName, (err, pref) => {
+      hasKey_c(key, preferenceFileName, (err, hasKey) => {
+        if (hasKey) {
+          delete pref[`${key}`];
+        } else {
+          // nothing was deleted, but still return true
+          return true;
+        }
+      });
+    });
+  }
+
   const DICTIONARY = Object.freeze({
     getDefaultPreferenceFilePath,
     getState,
@@ -633,14 +689,18 @@ module.exports = function (config) {
     setStates_c,
     deleteKey,
     deleteKeySync,
+    deleteKey_c,
     hasKey,
     hasKeySync,
     hasKey_c,
     serialize,
-    deserialize,
     serializeSync,
+    serialize_c,
+    deserialize,
     deserializeSync,
+    deserialize_c,
     deleteFile,
+    deleteFile_c,
     deleteFileSync
   });
 
