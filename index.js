@@ -644,7 +644,7 @@ module.exports = function (config) {
   }
 
   /**
-   * 
+   *
    * Synchronously deletes a single entry
    *
    * @param {*} key               The key in the preference in which it's value would deleted
