@@ -147,7 +147,7 @@ module.exports = function (config) {
   /**
    * Asynchronously deletes the preference file
    *
-   * @param optionalFileName  An optional filename used to persist the settings. This can be left null
+   * @param optionalFileName  An optional filename in which the corresponding file would be deleted. This can be left null
    * @returns                 a Promise that resolves to a boolean, indicating if the file was deleted
    */
   async function deleteFile(optionalFileName) {
@@ -162,7 +162,7 @@ module.exports = function (config) {
   /**
    * Synchronously deletes the preference file
    *
-   * @param optionalFileName An optional filename used to persist the settings. This can be left null
+   * @param optionalFileName An optional filename in which the corresponding file would be deleted. This can be left null
    * @returns                a boolean indicating if the file was deleted
    */
   function deleteFileSync(optionalFileName) {
@@ -177,7 +177,7 @@ module.exports = function (config) {
   /**
    * Asynchronously deletes the preference file
    *
-   * @param optionalFileName An optional filename used to delete the settings. This can be left null
+   * @param optionalFileName An optional filename in which the corresponding file would be deleted. This can be left null
    * @param callbackfn       A Node-Js qualified callback with any error that occurred as the first argument and a Boolean;
    *                         if the file was successfully deleted
    *

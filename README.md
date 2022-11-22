@@ -296,7 +296,7 @@ Asynchronously deletes the preference file
 
 #### Type: String
 
-An optional filename used to persist the settings. This can be left _null_
+An optional filename in which the corresponding file would be deleted. This can be left _null_
 
 #### Returns
 
@@ -612,7 +612,7 @@ Asynchronously deletes the preference file
 
 #### Type: String
 
-An optional filename used to delete the settings. This can be left _null_
+An optional filename in which the corresponding file would be deleted. This can be left _null_
 
 ### callbackfn
 
@@ -917,7 +917,7 @@ Synchronously deletes the preference file
 
 #### Type: String
 
-An optional filename used to persist the settings. This can be left _null_
+An optional filename in which the corresponding file would be deleted. This can be left _null_
 
 #### Returns
 
