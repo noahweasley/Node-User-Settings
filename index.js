@@ -47,10 +47,15 @@ module.exports = function (config) {
     preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || CONSTANTS.fileExt}`
   );
 
+  /**
+   * Gets the default save path to the preference
+   *
+   * @returns {*} the default save path to the preference
+   */
   const getDefaultPreferenceFilePath = () => defPreferenceFilePath;
 
-  function getPreferenceFilePath(prefFileName) {
-    return prefFileName ? path.join(preferenceFileDir, prefFileName) : defPreferenceFilePath;
+  function getPreferenceFilePath(optionalFileName) {
+    return optionalFileName ? path.join(preferenceFileDir, optionalFileName) : defPreferenceFilePath;
   }
 
   // check arguments so that there is no error thrown at runtime; synchronously
@@ -74,79 +79,79 @@ module.exports = function (config) {
   }
 
   /**
-   * asychronoously replaces the data in the user settings with the one specified by `dataOb`.
-   * A very uselful api for development purposes
+   * Asynchronously replaces all data in preference
    *
-   * @param {*} dataOb a JSON object to be persisted
-   * @param {*} preferenceFileName an optional file name to persist the settings
-   * @returns true if it was persisted
+   * @param {*} preferenceOb      A JSON object to be serialized and persisted
+   * @param {*} optionalFileName  An optional filename used to persist the settings. This can be left null
+   * @returns                     a Promise that resolves to a boolean indicating if it was persisted
    */
-  async function serialize(dataOb, preferenceFileName) {
-    return await setPreferences(dataOb, preferenceFileName);
+  async function serialize(preferenceOb, optionalFileName) {
+    return await setPreferences(preferenceOb, optionalFileName);
   }
 
   /**
-   * asychronoously replaces the data in the user settings with the one specified by `dataOb`.
-   * A very uselful api for development purposes
+   * Asynchronously replaces all data in preference
    *
-   * @param {*} dataOb a JSON object to be persisted
-   * @param {*} preferenceFileName an optional file name to persist the settings
-   * @param {*} callbackfnc a qualified callback function with an error as the first argument and the second argument as data
-   * @returns true if it was persisted
+   * @param {*} preferenceOb       A JSON object to be serialized and persisted
+   * @param {*} optionalFileName   An optional filename used to persist the settings. This can be left _null_
+   * @param {*} callbackfn        A Node-Js qualified callback with any error that occurred as the first argument
+   *                              and a Boolean; if the file was successfully persisted
    */
-  function serialize_c(dataOb, preferenceFileName, callbackfnc) {
-    setPreferencesWithCallback(dataOb, preferenceFileName, callbackfnc);
+  function serialize_c(preferenceOb, optionalFileName, callbackfn) {
+    setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn);
   }
 
   /**
-   * synchronously replaces the data in the user settings with the one specified by `dataOb`.
-   * A very uselful api for development purposes
+   * Synchronously replaces all data in preference
    *
-   * @param {*} dataOb a JSON object to be persisted
-   * @param {*} preferenceFileName an optional file name to persist the settings
-   * @returns true if it was persisted
+   * @param {*} preferenceOb       A JSON object to be serialized and persisted
+   * @param {*} optionalFileName   An optional filename used to persist the settings. This can be left null
+   * @returns                      true if it was persisted
    */
-  function serializeSync(dataOb, preferenceFileName) {
-    return setPreferencesSync(dataOb, preferenceFileName);
+  function serializeSync(preferenceOb, optionalFileName) {
+    return setPreferencesSync(preferenceOb, optionalFileName);
   }
 
   /**
-   * asynchronously gets the data in the user settings.
-   * A very uselful api for development purposes
+   * Asynchronously retrieves all the data in preference
    *
-   * @returns the persisted object as it exists in disk
+   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
+
+   * @returns                    a Promise that resolves to the persisted object as it exists in preference
    */
-  async function deserialize(preferenceFileName) {
-    return JSON.stringify(await getPreferences(preferenceFileName));
+  async function deserialize(optionalFileName) {
+    return JSON.stringify(await getPreferences(optionalFileName));
   }
 
   /**
-   * synchronously gets the data in the user settings.
-   * A very uselful api for development purposes
+   * Synchronously retrieves all the data in preference
    *
-   * @returns the persisted object as it exist in disk, synchronously
+   * @returns  The persisted object as it exists in preference
    */
-  function deserializeSync(preferenceFileName) {
-    return JSON.stringify(getPreferencesSync(preferenceFileName));
+  function deserializeSync(optionalFileName) {
+    return JSON.stringify(getPreferencesSync(optionalFileName));
   }
 
   /**
-   * asynchronously gets the data in the user settings.
-   * A very uselful api for development purposes
-   * 
+   * Asynchronously retrieves all the data in preference
+   *
+   * @param {*} optionalFileNameAn  optional filename used to persist the settings. This can be left null
+   * @param {*} callbackfn          A Node-Js qualified callback with any error that occurred as the first
+   *                                argument and a String; which is the data that was deserialized and retrieved
+   *
    */
-  function deserialize_c(preferenceFileName, callbackfnc) {
-    getPreferencesWithCallback(preferenceFileName, callbackfnc);
+  function deserialize_c(optionalFileName, callbackfn) {
+    getPreferencesWithCallback(optionalFileName, callbackfn);
   }
 
   /**
-   * asynchronously delete a specific settings file or the default, if the preference filename was not specified.
-   * A very uselful api for development purposes
+   * Asynchronously deletes the preference file
    *
-   * @param preferenceFileName the optional file to be deleted
+   * @param optionalFileName  An optional filename used to persist the settings. This can be left null
+   * @returns                 a Promise that resolves to a boolean, indicating if the file was deleted
    */
-  async function deleteFile(preferenceFileName) {
-    let filePath = getPreferenceFilePath(preferenceFileName);
+  async function deleteFile(optionalFileName) {
+    let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
       return await fsp.unlink(filePath);
@@ -155,14 +160,14 @@ module.exports = function (config) {
   }
 
   /**
-   * synchrounously delete a specific settings file or the default, if the preference filename was not specified.
-   * A very uselful api for development purposes
+   * Synchronously deletes the preference file
    *
-   * @param preferenceFileName the optional file to be deleted
+   * @param optionalFileName An optional filename used to persist the settings. This can be left null
+   * @returns                a boolean indicating if the file was deleted
    */
-  function deleteFileSync(preferenceFileName) {
-    checkArgs(preferenceFileName);
-    let filePath = getPreferenceFilePath(preferenceFileName);
+  function deleteFileSync(optionalFileName) {
+    checkArgs(optionalFileName);
+    let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
       return fs.unlinkSync(filePath);
@@ -170,22 +175,23 @@ module.exports = function (config) {
   }
 
   /**
-   * asynchrounously delete a specific settings file or the default, if the preference filename was not specified.
-   * A very uselful api for development purposes
+   * Asynchronously deletes the preference file
    *
-   * @param preferenceFileName the optional file to be deleted
-   * @param callbackfnc a qualified callback function with an error as the first argument and the data as the second
+   * @param optionalFileName An optional filename used to delete the settings. This can be left null
+   * @param callbackfn       A Node-Js qualified callback with any error that occurred as the first argument and a Boolean;
+   *                         if the file was successfully deleted
+   *
    */
-  function deleteFile_c(preferenceFileName, callbackfnc) {
-    checkArgs(preferenceFileName);
-    let filePath = getPreferenceFilePath(preferenceFileName);
-    fs.unlink(filePath, callbackfnc);
+  function deleteFile_c(optionalFileName, callbackfn) {
+    checkArgs(optionalFileName);
+    let filePath = getPreferenceFilePath(optionalFileName);
+    fs.unlink(filePath, callbackfn);
   }
 
   // asynchronously read the preference file from disk and then return an object representation of the file
-  async function getPreferences(prefFileName) {
-    await checkArgsP(prefFileName);
-    let filePath = getPreferenceFilePath(preferenceFileName);
+  async function getPreferences(optionalFileName) {
+    await checkArgsP(optionalFileName);
+    let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
       let data = await fsp.readFile(filePath, "utf8");
@@ -224,9 +230,9 @@ module.exports = function (config) {
   }
 
   // synchronously reads the preference file from disk and then return an object representation of the file
-  function getPreferencesSync(prefFileName) {
-    checkArgs(prefFileName);
-    let filePath = getPreferenceFilePath(prefFileName);
+  function getPreferencesSync(optionalFileName) {
+    checkArgs(optionalFileName);
+    let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
       let data = fs.readFileSync(filePath, "utf8");
@@ -251,31 +257,31 @@ module.exports = function (config) {
   }
 
   // asynchronously reads the preference file from disk and then return an object representation of the file
-  function getPreferencesWithCallback(prefFileName, callbackfnc) {
-    checkArgs(prefFileName);
-    let filePath = getPreferenceFilePath(prefFileName);
+  function getPreferencesWithCallback(optionalFileName, callbackfn) {
+    checkArgs(optionalFileName);
+    let filePath = getPreferenceFilePath(optionalFileName);
 
     fs.readFile(filePath, function (err, data) {
       if (err) {
-        return createPrefFile(callbackfnc);
+        return createPrefFile(callbackfn);
       } else {
-        return callbackfnc(null, JSON.parse(data.toString()));
+        return callbackfn(null, JSON.parse(data.toString()));
       }
     });
 
-    function createPrefFile(callbackfnc) {
+    function createPrefFile(callbackfn) {
       fs.open(filePath, "wx", (err, fd) => {
         if (err /** file not found or some other error occurred */) {
-          return createPrefDirectory(fd, callbackfnc);
+          return createPrefDirectory(fd, callbackfn);
         } else {
-          fs.writeFile(fd, "{}", (err) => callbackfnc(err, "{}"));
+          fs.writeFile(fd, "{}", (err) => callbackfn(err, "{}"));
         }
       });
 
       // create file directory
-      function createPrefDirectory(fd, callbackfnc) {
+      function createPrefDirectory(fd, callbackfn) {
         fs.mkdir(fd, { recursive: true }, (err) => {
-          callbackfnc(err, {});
+          callbackfn(err, {});
           fd?.close();
         });
       }
@@ -283,9 +289,9 @@ module.exports = function (config) {
   }
 
   // asynchronously writes to file, the JSON object specified by *pref*
-  async function setPreferences(pref, prefFileName) {
-    await checkArgsP(pref, prefFileName);
-    let fileName = getPreferenceFilePath(prefFileName);
+  async function setPreferences(pref, optionalFileName) {
+    await checkArgsP(pref, optionalFileName);
+    let fileName = getPreferenceFilePath(optionalFileName);
 
     const preference = JSON.stringify(pref);
     try {
@@ -297,9 +303,9 @@ module.exports = function (config) {
   }
 
   // synchronously writes to file, the JSON object specified by *pref*
-  function setPreferencesSync(pref, prefFileName) {
-    checkArgs(pref, prefFileName);
-    let fileName = getPreferenceFilePath(prefFileName);
+  function setPreferencesSync(pref, optionalFileName) {
+    checkArgs(pref, optionalFileName);
+    let fileName = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(pref);
 
     try {
@@ -310,72 +316,79 @@ module.exports = function (config) {
     }
   }
 
-  // asynchrounously writes to file, the JSON object specified by "pref"
-  function setPreferencesWithCallback(pref, prefFileName, callbackfnc) {
-    checkArgs(pref, prefFileName);
-    const filePath = getPreferenceFilePath(prefFileName);
+  // asynchronously writes to file, the JSON object specified by "pref"
+  function setPreferencesWithCallback(pref, optionalFileName, callbackfn) {
+    checkArgs(pref, optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(pref);
 
     fs.writeFile(filePath, preference, (err) => {
       if (err) {
-        return callbackfnc(err, false);
+        return callbackfn(err, false);
       } else {
-        return callbackfnc(null, true);
+        return callbackfn(null, true);
       }
     });
   }
 
   /**
-   *  asynchronously checks if the key specified by *key* is present
+   * Asynchronously checks if a key exists
    *
-   * @param key the key to check it's existence
+   * @param key               The key in the preference in which it's value would be checked for it's existence
+   * @param optionalFileName  An optional filename used to do the check. This can be left null
+   * @returns                 a Promise that resolves to a Boolean; indicating if the key exists in the persisted preference
    */
-  async function hasKey(key, prefFileName) {
+  async function hasKey(key, optionalFileName) {
     await checkArgsP(key);
-    let dataOB = await getPreferences(prefFileName);
-    return Object.keys(dataOB).includes(key);
+    let preferenceOb = await getPreferences(optionalFileName);
+    return Object.keys(preferenceOb).includes(key);
   }
 
   /**
-   *  synchronously checks if the key specified by *key* is present
+   *  Synchronously checks if a key exists
    *
-   * @param key the key to check it's existence
+   * @param key              The key in the preference in which it's value would be checked for it's existence
+   * @param optionalFileName An optional filename used to do the check. This can be left null
+   * @returns                a Boolean; indicating if the key exists in the persisted preference
    */
-  function hasKeySync(key, prefFileName) {
+  function hasKeySync(key, optionalFileName) {
     checkArgs(key);
-    let dataOB = getPreferencesSync(prefFileName);
-    return Object.keys(dataOB).includes(key);
+    let preferenceOb = getPreferencesSync(optionalFileName);
+    return Object.keys(preferenceOb).includes(key);
   }
 
   /**
-   * asynchronously checks if the key specified by *key* is present
+   * Asynchronously checks if a key exists
    *
-   * @param key the key to check it's existence
+   * @param key               The key in the preference in which it's value would be checked for it's existence
+   * @param optionalFileName  An optional filename used to do the check. This can be left null
+   * @param callbackfn        A Node-Js qualified callback with any error that occurred as the first argument and a Boolean;
+   *                          indicating if the key exists in the persisted preference
    */
-  function hasKey_c(key, prefFileName, callbackfnc) {
+  function hasKey_c(key, optionalFileName, callbackfn) {
     checkArgs(key);
-    getPreferencesWithCallback(prefFileName, (err, dataOB) => {
-      if (err) callbackfnc(err);
-      else callbackfnc(null, Object.keys(dataOB).includes(key));
+    getPreferencesWithCallback(optionalFileName, (err, preferenceOb) => {
+      if (err) callbackfn(err);
+      else callbackfn(null, Object.keys(preferenceOb).includes(key));
     });
   }
 
   /**
-   *  asynchronously retrieves the state of a user preference using a key-value pair
+   *  Gets a value asynchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} defaultValue the default value to be retrieved if that key has never been set
-   * @returns a Promises that resolves to the value set previously or just resolves to the default value
+   * @param {*} optionalFileName  refers to file name for the preference to be use if this was set, if not, then
+   *                              the default file would be used
+   * @param {*} key               The key in the preference in which it's value would be retrieved
+   * @param {*} defaultValue      A default value to be used if that key has never been set
+   * @returns                     a Promise that resolves to a string. The value which was mapped to the key specified
    */
-  async function getState(key, defaultValue, prefFileName) {
-    await checkArgsP(key, prefFileName);
+  async function getState(key, defaultValue, optionalFileName) {
+    await checkArgsP(key, optionalFileName);
     return new Promise(async (resolve, _reject) => {
       // first check if key exists
-      if (await hasKey(key, prefFileName)) {
-        const dataOB = await getPreferences(prefFileName);
-        resolve(`${dataOB[`${key}`]}`);
+      if (await hasKey(key, optionalFileName)) {
+        const preferenceOb = await getPreferences(optionalFileName);
+        resolve(`${preferenceOb[`${key}`]}`);
       } else {
         // emit promise based result
         resolve(`${defaultValue}`);
@@ -384,228 +397,225 @@ module.exports = function (config) {
   }
 
   /**
-   * synchronously  retrieves the state of a user preference using a key-value pair
+   * Gets a value synchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} defaultValue the default value to be retrieved if that key has never been set
+   * @param {*} optionalFileName    refers to file name for the preference to be use if this was set, if not, then
+   *                                the default file would be used
+   * @param {*} defaultValue        the default value to be retrieved if that key has never been set
+   * @param {*} key                 An optional filename used to persist the settings. This can be left null
+   * @returns                       A String; the value which was mapped to the key specified
    */
-  function getStateSync(key, defaultValue, prefFileName) {
-    checkArgs(key, prefFileName);
+  function getStateSync(key, defaultValue, optionalFileName) {
+    checkArgs(key, optionalFileName);
     // first check if key exists
-    if (hasKeySync(key, prefFileName)) {
-      const dataOB = getPreferencesSync(prefFileName);
-      return `${dataOB[`${key}`]}`;
+    if (hasKeySync(key, optionalFileName)) {
+      const preferenceOb = getPreferencesSync(optionalFileName);
+      return `${preferenceOb[`${key}`]}`;
     } else return `${defaultValue}`;
   }
 
   /**
-   * using callbacks, asynchronously  retrieves the state of a user preference using a key-value pair
+   * Gets a value asynchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} defaultValue the default value to be retrieved if that key has never been set
-   * @param {*} callbackfnc a qualified callback method with and error object as first argument and data as the second
+   * @param {*} key               The key in the preference in which it's value would be retrieved
+   * @param {*} optionalFileName  An optional filename used to persist the settings. This can be left _null_
+   * @param {*} defaultValue      the default value to be retrieved if that key has never been set
+   * @param {*} callbackfn        A Node-Js qualified callback with any error that occurred as the first argument and a String;
+   *                              the value which was mapped to the key specified
    */
-  function getState_c(key, defaultValue, prefFileName, callbackfnc) {
-    checkArgs(prefFileName);
+  function getState_c(key, defaultValue, optionalFileName, callbackfn) {
+    checkArgs(optionalFileName);
 
-    hasKey_c(key, prefFileName, (_err1, hasKey) => {
+    hasKey_c(key, optionalFileName, (_err1, hasKey) => {
       if (hasKey) {
-        getPreferencesWithCallback(prefFileName, (_err2, dataOB) => callbackfnc(null, `${dataOB[`${key}`]}`));
+        getPreferencesWithCallback(optionalFileName, (_err2, preferenceOb) =>
+          callbackfn(null, `${preferenceOb[`${key}`]}`)
+        );
       } else {
-        callbackfnc(null, `${defaultValue}`);
+        callbackfn(null, `${defaultValue}`);
       }
     });
   }
 
   /**
-   *  asynchronously retrieves the state of a user preference using a key-value pair
+   *  Gets multiple value simultaneously and asynchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} defaultValue the default value to be retrieved if that key has never been set
-   * @returns a Promise that resolves to the values set previously or just resolves to an empty array
+   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
+   * @param {*} states           An array of keys of which values would be retrieved
+   * @returns                    A Promise that resolves an Array; A list of all the values that were retrieved
    */
-  async function getStates(states = [], prefFileName) {
-    await checkArgsP(prefFileName);
+  async function getStates(states = [], optionalFileName) {
+    await checkArgsP(optionalFileName);
     return new Promise(async (resolve, reject) => {
       if (!states instanceof Array) {
         reject(new Error("states must be a qualified Array object"));
       }
 
-      const dataOB = await getPreferences(prefFileName);
-      let values = states.map((key) => `${dataOB[`${key}`]}`);
+      const preferenceOb = await getPreferences(optionalFileName);
+      let values = states.map((key) => `${preferenceOb[`${key}`]}`);
 
       resolve(values);
     });
   }
 
   /**
-   * synchronously  retrieves a list of states in the user preference using keys
+   * Gets multiple value simultaneously and synchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} states the list of states used to retrieve the list of values
-   * @returns a Promise that resolves to the values set previously or just resolves to an empty array
+   * @param {*} states           An array of keys of which values would be retrieved
+   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
+   * @returns                    An Array; a list of all the values that were retrieved
+
    */
-  function getStatesSync(states, prefFileName) {
-    checkArgs(prefFileName);
+  function getStatesSync(states = [], optionalFileName) {
+    checkArgs(optionalFileName);
     if (!states instanceof Array) {
       throw new Error("states must be a qualified Array object");
     }
-    const dataOB = getPreferencesSync(prefFileName);
-    let values = states.map((key) => `${dataOB[`${key}`]}`);
+    const preferenceOb = getPreferencesSync(optionalFileName);
+    let values = states.map((key) => `${preferenceOb[`${key}`]}`);
 
     return values;
   }
 
   /**
-   * asynchronously retrieves the states of a user preference using a key-value pair
+   * Gets multiple value simultaneously and asynchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} states the list of states used to retrieve the list of values
-   * @param {*} callbackfnc a qualified callback function with error as the first argument and the data as the second
+   * @param {*} optionalFileName   optional filename used to persist the settings. This can be left null
+   * @param {*} states             an array of keys of which values would be retrieved
+   * @param {*} callbackfn         a qualified callback function with error as the first argument and the data as the second
    */
-  function getStates_c(states, prefFileName, callbackfnc) {
-    checkArgs(prefFileName);
-    if (!states instanceof Array) callbackfnc(new Error("states must be a qualified Array object"));
+  function getStates_c(states = [], optionalFileName, callbackfn) {
+    checkArgs(optionalFileName);
+    if (!states instanceof Array) callbackfn(new Error("states must be a qualified Array object"));
 
-    getPreferencesWithCallback(prefFileName, (err, dataOB) => {
+    getPreferencesWithCallback(optionalFileName, (err, preferenceOb) => {
       if (err) {
-        return callbackfnc(err);
+        return callbackfn(err);
       } else {
-        let values = states.map((key) => `${dataOB[`${key}`]}`);
-        return callbackfnc(null, values);
+        let values = states.map((key) => `${preferenceOb[`${key}`]}`);
+        return callbackfn(null, values);
       }
     });
   }
 
   /**
-   * synchronously sets the state of a user preference using a key-value pair
-   * Note: A new key would be created after this request
+   * Sets a value synchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} value the value to be set
+   * @param {*} optionalFileName refers to file name for the preference to be use if this was set, if not, then
+   *                            the default file would be used
+   * @param {*} key             The key in the preference in which it's value would be set
+   * @param {*} value           The value to be set and mapped to the key
+   * @returns                   A Boolean; indicating if the operation was successful or not
    */
-  function setStateSync(key, value, prefFileName) {
-    checkArgs(key, prefFileName);
-    let pref = getPreferencesSync(prefFileName);
+  function setStateSync(key, value, optionalFileName) {
+    checkArgs(key, optionalFileName);
+    let pref = getPreferencesSync(optionalFileName);
     pref[`${key}`] = `${value}`;
     return setPreferencesSync(pref);
   }
 
   /**
-   *  asynchronously sets the state of a user preference using a key-value pair
-   *  Note: A new key would be created after this request
+   *  Sets a value asynchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} value the value to be set
+   * @param {*} key              The key in the preference in which it's value would be set
+   * @param {*} value            the value to be set and mapped to the key
+   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
+   * @returns                    a Promise that resolves to a Boolean; indicating if the operation was successful or not
    */
-  async function setState(key, value, prefFileName) {
-    await checkArgsP(key, prefFileName);
+  async function setState(key, value, optionalFileName) {
+    await checkArgsP(key, optionalFileName);
     return new Promise(async (resolve, _reject) => {
-      let pref = await getPreferences(prefFileName);
+      let pref = await getPreferences(optionalFileName);
       pref[`${key}`] = `${value}`;
 
-      const isPreferenceSet = await setPreferences(pref, prefFileName);
+      const isPreferenceSet = await setPreferences(pref, optionalFileName);
 
       resolve(isPreferenceSet);
     });
   }
 
   /**
-   *  asynchronously sets the state of a user preference using a key-value pair, using callbacks
-   *  Note: A new key would be created after this request
+   *  Sets a value asynchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} key the key in settings in which it's value would be retrieved
-   * @param {*} value the value to be set
+   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
+   * @param {*} key              The key in the preference in which it's value would be set
+   * @param {*} value            The value to be set and mapped to the key
+   * @param {*} callbackfn       Node-Js qualified callback with any error that occurred as the first argument and a Boolean;
+   *                             indicating if the operation was successful or not
    */
-  function setState_c(key, value, prefFileName, callbackfnc) {
-    checkArgs(key, prefFileName);
+  function setState_c(key, value, optionalFileName, callbackfn) {
+    checkArgs(key, optionalFileName);
 
-    getPreferencesWithCallback(prefFileName, (_err, pref) => {
+    getPreferencesWithCallback(optionalFileName, (_err, pref) => {
       pref[`${key}`] = `${value}`;
-      setPreferencesWithCallback(pref, prefFileName, callbackfnc);
+      setPreferencesWithCallback(pref, optionalFileName, callbackfn);
     });
   }
 
   /**
    *  asynchronously sets the states of a user preference using a JSON object containing key-value pairs
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param states an object representing the states to be synched
-   * @returns the number of staes that was saved
+   * @param states               A map with the key-value pair to be persisted
+   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
+   * @returns                    A Promise that resolves an Array; list of all the values that were persisted / set
    */
-  async function setStates(states, prefFileName) {
-    await checkArgsP(prefFileName);
+  async function setStates(states, optionalFileName) {
+    await checkArgsP(optionalFileName);
     return new Promise(async (resolve, reject) => {
       if (!states instanceof Object) {
         reject(new Error("states must be a qualified JSON object"));
       }
-      let pref = await getPreferences(prefFileName);
+      let pref = await getPreferences(optionalFileName);
       let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
 
-      const isPreferenceSet = await setPreferences(pref, prefFileName);
+      const isPreferenceSet = await setPreferences(pref, optionalFileName);
       isPreferenceSet ? resolve(inserted) : reject([]);
     });
   }
 
   /**
-   * synchronously sets the states of a user preference using a JSON object containing key-value pairs
+   *  Sets multiple value simultaneously and synchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param states an object representing the states to be synched
-   * @returns the number of staes that was saved
+   * @param {*} states           A map with the key-value pair to be persisted
+   * @param {*} optionalFileName refers to file name for the preference to be use if this was set, if not, then
+   *                             the default file would be used
+   * @returns                    an Array; a list of all the values that were persisted / set
    */
-  function setStatesSync(states, prefFileName) {
-    checkArgs(prefFileName);
+  function setStatesSync(states, optionalFileName) {
+    checkArgs(optionalFileName);
     if (!states instanceof Object) {
       throw new Error("states must be a qualified JSON object");
     }
-    let pref = getPreferencesSync(prefFileName);
+    let pref = getPreferencesSync(optionalFileName);
     let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
 
     return setPreferencesSync(pref) ? inserted : [];
   }
 
   /**
-   * asynchronously sets the states of a user preference using a JSON object containing key-value pairs
+   * Sets multiple value simultaneously and asynchronously
    *
-   * @param {*} prefFileName refers to file name for the preference to be use if this was set, if not, then
-   *                     the default file would be used
-   * @param {*} states an object representing the states to be synched
-   * @param {*} callbackfnc a qualified callback function with error as the first argument and the data as the second
+   * @param {*} states            A map with the key-value pair to be persisted
+   * @param {*} optionalFileName  An optional filename used to persist the settings. This can be left null
+   * @param {*} callbackfn        A Node-Js qualified callback with any error that occurred as the first argument and an Array; a list of all the values that were persisted / set
    */
-  function setStates_c(states, prefFileName, callbackfnc) {
-    checkArgs(prefFileName);
+  function setStates_c(states, optionalFileName, callbackfn) {
+    checkArgs(optionalFileName);
     if (!states instanceof Object) {
       throw new Error("states must be a qualified JSON object");
     }
 
-    getPreferencesWithCallback(prefFileName, (err1, pref) => {
+    getPreferencesWithCallback(optionalFileName, (err1, pref) => {
       if (err1) {
-        return callbackfnc(err1);
+        return callbackfn(err1);
       } else {
         let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
 
-        setPreferencesWithCallback(pref, prefFileName, (err2, isInserted) => {
+        setPreferencesWithCallback(pref, optionalFileName, (err2, isInserted) => {
           if (isInserted) {
-            callbackfnc(null, inserted);
+            callbackfn(err2, inserted);
           } else {
-            callbackfnc(err2);
+            callbackfn(err2);
           }
         });
       }
@@ -613,36 +623,39 @@ module.exports = function (config) {
   }
 
   /**
-   * asynchronously removes a preference value from settings if it exists
-   * Note: Trying to use *getState()* would just return the default arg set
+   * Asynchronously deletes a single entry
    *
-   * @param {*} key the key in settings that would be deleted
+   * @param {*} key               The key in the preference in which it's value would be deleted
+   * @param {*} optionalFileName  An optional filename used to persist the settings. This can be left null
+   * @returns                     a Promise that resolves to a Boolean; indicating if the key was successfully deleted
    */
-  async function deleteKey(key, prefFileName) {
-    await checkArgsP(key, prefFileName);
-    let pref = await getPreferences(prefFileName);
-    // check if key is present in prefs
-    if (await hasKey(key, prefFileName)) {
+  async function deleteKey(key, optionalFileName) {
+    await checkArgsP(key, optionalFileName);
+    let pref = await getPreferences(optionalFileName);
+    // check if key is present in preference
+    if (await hasKey(key, optionalFileName)) {
       delete pref[`${key}`];
     } else {
       // nothing was deleted, but still return true
       return true;
     }
 
-    return await setPreferences(pref, prefFileName);
+    return await setPreferences(pref, optionalFileName);
   }
 
   /**
-   * synchronously removes a preference value from settings if it exists
-   * Note: Trying to use *getState()* would just return the default arg set
+   * 
+   * Synchronously deletes a single entry
    *
-   * @param {*} key the key in settings that would be deleted
+   * @param {*} key               The key in the preference in which it's value would deleted
+   * @param {*} optionalFileName  An optional filename used to persist the settings. This can be left null
+   * @returns                     A Boolean; indicating if the key was successfully deleted
    */
-  function deleteKeySync(key, prefFileName) {
-    checkArgs(key, prefFileName);
+  function deleteKeySync(key, optionalFileName) {
+    checkArgs(key, optionalFileName);
     let pref = getPreferencesSync();
-    // check if key is present in prefs
-    if (hasKeySync(key, prefFileName)) {
+    // check if key is present in preference
+    if (hasKeySync(key, optionalFileName)) {
       delete pref[`${key}`];
     } else {
       // nothing was deleted, but still return true
@@ -653,23 +666,30 @@ module.exports = function (config) {
   }
 
   /**
-   * asynchronously removes a preference value from settings if it exists
-   * Note: Trying to use *getState()* would just return the default arg set
+   * Asynchronously deletes a single entry
    *
-   * @param {*} key the key in settings that would be deleted
+   * @param {*} key              The key in the preference in which it's value would be deleted
+   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
+   * @param {*} callbackfn       A Node-Js qualified callback with any error that occurred as the first argument and a Boolean;
+   *                             indicating if the key was successfully deleted
    */
-  function deleteKey_c(key, preferenceFileName, callbackfnc) {
-    checkArgs(key, preferenceFileName);
+  function deleteKey_c(key, optionalFileName, callbackfn) {
+    checkArgs(key, optionalFileName);
 
-    getPreferencesWithCallback(preferenceFileName, (err, pref) => {
-      hasKey_c(key, preferenceFileName, (err, hasKey) => {
-        if (hasKey) {
-          delete pref[`${key}`];
-        } else {
-          // nothing was deleted, but still return true
-          return true;
-        }
-      });
+    getPreferencesWithCallback(optionalFileName, (err1, pref) => {
+      if (err1) {
+        return callbackfn(err1);
+      } else {
+        hasKey_c(key, optionalFileName, (err2, hasKey) => {
+          if (hasKey) {
+            delete pref[`${key}`];
+            callbackfn(err2, true);
+          } else {
+            // nothing was deleted, but still return true
+            callbackfn(err2, true);
+          }
+        });
+      }
     });
   }
 

@@ -260,6 +260,4 @@ describe("Callback-based settings api tests", () => {
       done();
     });
   });
-
-  //
 });
