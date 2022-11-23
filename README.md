@@ -336,6 +336,12 @@ _A Boolean_. indicating if it was persisted successfully
 **Example**
 
 ```javascript
+const mockData = {
+  moduleName: "node-user-settings",
+  version: "1.0.0",
+  author: "noahweasley"
+};
+
 const isPersisted = await settings.serialize(mockData, optionalFileName);
 console.log(`Is data changed ? ${isPersisted ? `YES` : `NO`}`);
 ```
@@ -658,6 +664,12 @@ A Node-Js qualified callback with any error that occurred as the first argument 
 **Example**
 
 ```javascript
+const mockData = {
+  moduleName: "node-user-settings",
+  version: "1.0.0",
+  author: "noahweasley"
+};
+
 settings.serialize_c(mockData, optionalFileName, function (err, isPersisted) {
   if (err) console.error(err);
   else console.log(`Is data changed ? ${isPersisted ? `YES` : `NO`}`);
@@ -953,6 +965,12 @@ An optional filename used to persist the settings. This can be left _null_
 **Example**
 
 ```javascript
+const mockData = {
+  moduleName: "node-user-settings",
+  version: "1.0.0",
+  author: "noahweasley"
+};
+
 const isPersisted = settings.serializeSync(mockData, optionalFileName);
 console.log(`Is data changed ? ${isPersisted ? `YES` : `NO`}`);
 ```
