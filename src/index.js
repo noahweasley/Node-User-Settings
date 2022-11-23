@@ -288,12 +288,12 @@ module.exports = function (config) {
     }
   }
 
-  // asynchronously writes to file, the JSON object specified by *pref*
-  async function setPreferences(pref, optionalFileName) {
-    await checkArgsP(pref, optionalFileName);
+  // asynchronously writes to file, the JSON object specified by *preferenceOb*
+  async function setPreferences(preferenceOb, optionalFileName) {
+    await checkArgsP(preferenceOb, optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
 
-    const preference = JSON.stringify(pref);
+    const preference = JSON.stringify(preferenceOb);
 
     try {
       await fsp.writeFile(filePath, preference);
@@ -303,11 +303,11 @@ module.exports = function (config) {
     }
   }
 
-  // synchronously writes to file, the JSON object specified by *pref*
-  function setPreferencesSync(pref, optionalFileName) {
-    checkArgs(pref, optionalFileName);
+  // synchronously writes to file, the JSON object specified by *preferenceOb*
+  function setPreferencesSync(preferenceOb, optionalFileName) {
+    checkArgs(preferenceOb, optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
-    const preference = JSON.stringify(pref);
+    const preference = JSON.stringify(preferenceOb);
 
     try {
       fs.writeFileSync(filePath, preference);
@@ -317,11 +317,11 @@ module.exports = function (config) {
     }
   }
 
-  // asynchronously writes to file, the JSON object specified by "pref"
-  function setPreferencesWithCallback(pref, optionalFileName, callbackfn) {
-    checkArgs(pref, optionalFileName);
+  // asynchronously writes to file, the JSON object specified by "preferenceOb"
+  function setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn) {
+    checkArgs(preferenceOb, optionalFileName);
     const filePath = getPreferenceFilePath(optionalFileName);
-    const preference = JSON.stringify(pref);
+    const preference = JSON.stringify(preferenceOb);
 
     fs.writeFile(filePath, preference, (err) => callbackfn(err, err ? false : true));
   }
@@ -504,9 +504,9 @@ module.exports = function (config) {
    */
   function setStateSync(key, value, optionalFileName) {
     checkArgs(key, optionalFileName);
-    let pref = getPreferencesSync(optionalFileName);
-    pref[`${key}`] = `${value}`;
-    return setPreferencesSync(pref);
+    let preferenceOb = getPreferencesSync(optionalFileName);
+    preferenceOb[`${key}`] = `${value}`;
+    return setPreferencesSync(preferenceOb);
   }
 
   /**
@@ -520,10 +520,10 @@ module.exports = function (config) {
   async function setState(key, value, optionalFileName) {
     await checkArgsP(key, optionalFileName);
     return new Promise(async (resolve, _reject) => {
-      let pref = await getPreferences(optionalFileName);
-      pref[`${key}`] = `${value}`;
+      let preferenceOb = await getPreferences(optionalFileName);
+      preferenceOb[`${key}`] = `${value}`;
 
-      const isPreferenceSet = await setPreferences(pref, optionalFileName);
+      const isPreferenceSet = await setPreferences(preferenceOb, optionalFileName);
 
       resolve(isPreferenceSet);
     });
@@ -541,10 +541,9 @@ module.exports = function (config) {
   function setState_c(key, value, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);
 
-    getPreferencesWithCallback(optionalFileName, (_err, pref) => {
-      pref[`${key}`] = `${value}`;
-      console.log(require("util").inspect(pref));
-      setPreferencesWithCallback(pref, optionalFileName, callbackfn);
+    getPreferencesWithCallback(optionalFileName, (_err, preferenceOb) => {
+      preferenceOb[`${key}`] = `${value}`;
+      setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn);
     });
   }
 
@@ -561,10 +560,10 @@ module.exports = function (config) {
       if (!states instanceof Object) {
         reject(new Error("states must be a qualified JSON object"));
       }
-      let pref = await getPreferences(optionalFileName);
-      let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
+      let preferenceOb = await getPreferences(optionalFileName);
+      let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
-      const isPreferenceSet = await setPreferences(pref, optionalFileName);
+      const isPreferenceSet = await setPreferences(preferenceOb, optionalFileName);
       isPreferenceSet ? resolve(inserted) : reject([]);
     });
   }
@@ -582,10 +581,10 @@ module.exports = function (config) {
     if (!states instanceof Object) {
       throw new Error("states must be a qualified JSON object");
     }
-    let pref = getPreferencesSync(optionalFileName);
-    let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
+    let preferenceOb = getPreferencesSync(optionalFileName);
+    let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
-    return setPreferencesSync(pref) ? inserted : [];
+    return setPreferencesSync(preferenceOb) ? inserted : [];
   }
 
   /**
@@ -601,13 +600,13 @@ module.exports = function (config) {
       throw new Error("states must be a qualified JSON object");
     }
 
-    getPreferencesWithCallback(optionalFileName, (err1, pref) => {
+    getPreferencesWithCallback(optionalFileName, (err1, preferenceOb) => {
       if (err1) {
         return callbackfn(err1);
       } else {
-        let inserted = Object.keys(states).map((key) => (pref[`${key}`] = `${states[`${key}`]}`));
+        let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
-        setPreferencesWithCallback(pref, optionalFileName, (err2, isInserted) => {
+        setPreferencesWithCallback(preferenceOb, optionalFileName, (err2, isInserted) => {
           if (isInserted) {
             callbackfn(err2, inserted);
           } else {
@@ -627,16 +626,16 @@ module.exports = function (config) {
    */
   async function deleteKey(key, optionalFileName) {
     await checkArgsP(key, optionalFileName);
-    let pref = await getPreferences(optionalFileName);
+    let preferenceOb = await getPreferences(optionalFileName);
     // check if key is present in preference
     if (await hasKey(key, optionalFileName)) {
-      delete pref[`${key}`];
+      delete preferenceOb[`${key}`];
     } else {
       // nothing was deleted, but still return true
       return true;
     }
 
-    return await setPreferences(pref, optionalFileName);
+    return await setPreferences(preferenceOb, optionalFileName);
   }
 
   /**
@@ -649,16 +648,16 @@ module.exports = function (config) {
    */
   function deleteKeySync(key, optionalFileName) {
     checkArgs(key, optionalFileName);
-    let pref = getPreferencesSync();
+    let preferenceOb = getPreferencesSync();
     // check if key is present in preference
     if (hasKeySync(key, optionalFileName)) {
-      delete pref[`${key}`];
+      delete preferenceOb[`${key}`];
     } else {
       // nothing was deleted, but still return true
       return true;
     }
 
-    return setPreferencesSync(pref);
+    return setPreferencesSync(preferenceOb);
   }
 
   /**
@@ -672,13 +671,13 @@ module.exports = function (config) {
   function deleteKey_c(key, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);
 
-    getPreferencesWithCallback(optionalFileName, (err1, pref) => {
+    getPreferencesWithCallback(optionalFileName, (err1, preferenceOb) => {
       if (err1) {
         return callbackfn(err1);
       } else {
         hasKey_c(key, optionalFileName, (err2, hasKey) => {
           if (hasKey) {
-            delete pref[`${key}`];
+            delete preferenceOb[`${key}`];
             callbackfn(err2, true);
           } else {
             // nothing was deleted, but still return true
