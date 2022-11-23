@@ -3,5 +3,7 @@ node_modules
 debug.js
 Settings.json
 # npm ignore
+.github
+.vscode
 test
 auto.bat
