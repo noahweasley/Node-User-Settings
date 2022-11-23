@@ -45,6 +45,32 @@ npm i node-user-settings --save
 ---
 
 ```javascript
+const settings = require("node-user-settings)([options]);
+```
+
+### Options
+
+#### Type: `Object`
+
+#### `preferenceFileName` (deprecated)
+
+The filename (with extension) used to persist preference
+
+#### `preferenceFileDir`
+
+The directory used to persist preference
+
+#### `fileName`
+
+The file name (without extension) used to persist preference
+
+#### `fileExt`
+
+The file extension of the file used to persist preference
+
+**Example**
+
+```javascript
 // preferenceFileName is optional, it defaults to a Settings.json file
 
 const settings = require("node-user-settings")({
@@ -58,6 +84,8 @@ const settings = require("node-user-settings")({
 ```
 
 ## General Utility Method
+
+---
 
 ### ` getDefaultPreferenceFilePath()`
 
@@ -88,19 +116,19 @@ Gets a value asynchronously
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be retrieved
 
 ### optionalFileName
 
-#### Type: String
+#### Type:`String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### defaultValue
 
-#### Type: String
+#### Type: `String`
 
 A default value to be used if that key has never been set
 
@@ -125,19 +153,19 @@ Sets a value asynchronously
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be retrieved
 
 ### value
 
-#### Type: String
+#### Type: `String`
 
 The value to be set and mapped to the key
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -162,13 +190,13 @@ Sets multiple value simultaneously and asynchronously
 
 ### states
 
-#### Type: JSON Object
+#### Type: `Object`
 
 A map with the key-value pair to be persisted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -200,13 +228,13 @@ Gets multiple value simultaneously and asynchronously
 
 ### states
 
-#### Type: Array
+#### Type: `Array`
 
 An array of keys of which values would be retrieved
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -232,13 +260,13 @@ Asynchronously checks if a key exists
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be checked for it's existence
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to do the check. This can be left _null_
 
@@ -263,13 +291,13 @@ Asynchronously deletes a single entry
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be deleted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -294,7 +322,7 @@ Asynchronously deletes the preference file
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename in which the corresponding file would be deleted. This can be left _null_
 
@@ -319,13 +347,13 @@ Asynchronously replaces all data in preference
 
 ### preferenceOb
 
-#### Type: JSON object
+#### Type: `Object`
 
 A JSON object to be serialized and persisted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -356,7 +384,7 @@ Asynchronously retrieves all the data in preference
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -385,25 +413,25 @@ Gets a value asynchronously
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be retrieved
 
 ### defaultValue
 
-#### Type: String
+#### Type: `String`
 
 A default value to be used if that key has never been set
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and a String; the value which was mapped to the key specified
 
@@ -426,25 +454,25 @@ Sets a value asynchronously
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be set
 
 ### value
 
-#### Type: String
+#### Type: `String`
 
 The value to be set and mapped to the key
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; indicating if the operation was successful or not
 
@@ -467,19 +495,19 @@ Sets multiple value simultaneously and asynchronously
 
 ### states
 
-#### Type: JSON Object
+#### Type: `Object`
 
 A map with the key-value pair to be persisted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and an Array; a list of all the values that were persisted / set
 
@@ -509,19 +537,19 @@ Gets multiple value simultaneously and asynchronously
 
 ### states
 
-#### Type: Array
+#### Type: `Array`
 
 An array of keys of which values would be retrieved
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and an Array; list of all the values that were retrieved
 
@@ -546,19 +574,19 @@ Asynchronously checks if a key exists
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be checked for it's existence
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to do the check. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; indicating if the key exists in the persisted preference
 
@@ -581,19 +609,19 @@ Asynchronously deletes a single entry
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be deleted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; indicating if the key was successfully deleted
 
@@ -616,13 +644,13 @@ Asynchronously deletes the preference file
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename in which the corresponding file would be deleted. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; if the file was successfully deleted
 
@@ -645,19 +673,19 @@ Asynchronously replaces all data in preference
 
 ### preferenceOb
 
-#### Type: JSON object
+#### Type: `Object`
 
 A JSON object to be serialized and persisted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; if the file was successfully persisted
 
@@ -686,13 +714,13 @@ Asynchronously retrieves all the data in preference
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
 ### callbackfn
 
-#### Type: Function
+#### Type: `Function`
 
 A Node-Js qualified callback with any error that occurred as the first argument and a String; which is the data that was deserialized and retrieved
 
@@ -719,7 +747,7 @@ Gets a value synchronously
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be retrieved
 
@@ -727,13 +755,13 @@ The key in the preference in which it's value would be retrieved
 
 The default value to be retrieved if that key has never been set
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be retrieved
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -758,19 +786,19 @@ Sets a value synchronously
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be retrieved
 
 ### value
 
-#### Type: String
+#### Type: `String`
 
 The value to be set and mapped to the key
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -795,13 +823,13 @@ Sets multiple value simultaneously and synchronously
 
 ### states
 
-#### Type: JSON Object
+#### Type: `Object`
 
 A map with the key-value pair to be persisted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -833,13 +861,13 @@ Gets multiple value simultaneously and synchronously
 
 ### states
 
-#### Type: Array
+#### Type: `Array`
 
 An array of keys of which values would be retrieved
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -865,13 +893,13 @@ Synchronously checks if a key exists
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would be checked for it's existence
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to do the check. This can be left _null_
 
@@ -896,13 +924,13 @@ Synchronously deletes a single entry
 
 ### key
 
-#### Type: String
+#### Type: `String`
 
 The key in the preference in which it's value would deleted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -927,7 +955,7 @@ Synchronously deletes the preference file
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename in which the corresponding file would be deleted. This can be left _null_
 
@@ -952,13 +980,13 @@ Synchronously replaces all data in preference
 
 ### preferenceOb
 
-#### Type: JSON object
+#### Type: `Object`
 
 A JSON object to be serialized and persisted
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
@@ -985,7 +1013,7 @@ Synchronously retrieves all the data in preference
 
 ### optionalFileName
 
-#### Type: String
+#### Type: `String`
 
 An optional filename used to persist the settings. This can be left _null_
 
