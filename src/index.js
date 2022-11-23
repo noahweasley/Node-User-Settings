@@ -291,12 +291,12 @@ module.exports = function (config) {
   // asynchronously writes to file, the JSON object specified by *pref*
   async function setPreferences(pref, optionalFileName) {
     await checkArgsP(pref, optionalFileName);
-    let fileName = getPreferenceFilePath(optionalFileName);
+    let filePath = getPreferenceFilePath(optionalFileName);
 
     const preference = JSON.stringify(pref);
 
     try {
-      await fsp.writeFile(fileName, preference);
+      await fsp.writeFile(filePath, preference);
       return true;
     } catch (err) {
       return false;
@@ -306,11 +306,11 @@ module.exports = function (config) {
   // synchronously writes to file, the JSON object specified by *pref*
   function setPreferencesSync(pref, optionalFileName) {
     checkArgs(pref, optionalFileName);
-    let fileName = getPreferenceFilePath(optionalFileName);
+    let filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(pref);
 
     try {
-      fs.writeFileSync(fileName, preference);
+      fs.writeFileSync(filePath, preference);
       return true;
     } catch (err) {
       return false;
