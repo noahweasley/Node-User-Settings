@@ -14,9 +14,6 @@
     "sync",
     "electron"
   ],
-  "files": [
-    "src/*"
-  ],
   "repository": "https://github.com/noahweasley/Node-User-Settings",
   "author": {
     "name": "noahweasley",

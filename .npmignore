@@ -1,0 +1,7 @@
+node_modules
+.env
+debug.js
+Settings.json
+# npm ignore
+test
+auto.bat
