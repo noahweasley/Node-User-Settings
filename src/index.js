@@ -60,7 +60,7 @@ module.exports = function (config) {
 
   // check arguments so that there is no error thrown at runtime; synchronously
   function checkArgs(...args) {
-    args.forEach((arg) => {
+    args.forEach(function (arg) {
       if (arg && !args instanceof String) {
         throw new Error(`${arg} must be a String`);
       }
@@ -69,7 +69,7 @@ module.exports = function (config) {
 
   // check arguments so that there is no error thrown at runtime; asynchronously
   function checkArgsP(...args) {
-    args.forEach((arg) => {
+    args.forEach(function (arg) {
       if (arg && !args instanceof String) {
         return Promise.reject(new Error(`${arg} must be a String`));
       }
