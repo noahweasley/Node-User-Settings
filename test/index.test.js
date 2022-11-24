@@ -83,7 +83,7 @@ describe("Promise-based settings api tests", () => {
     let isDeleted = await settings.deleteKey("author", OPTIONAL_FILENAME);
     expect(isDeleted).toBe(true);
   });
-
+  
   test("asynchronously check if a single entry exists without optional filename ( returning a promise )", async () => {
     let hasKey = await settings.hasKey("moduleName");
     expect(hasKey).toBe(true);
