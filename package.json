@@ -32,7 +32,11 @@
     "url": "https://www.buymeacoffee.com/noahweasley"
   },
   "devDependencies": {
+    "@types/proper-lockfile": "^4.1.2",
     "dotenv": "^16.0.3",
     "jest": "^29.3.1"
+  },
+  "dependencies": {
+    "proper-lockfile": "^4.1.2"
   }
 }
