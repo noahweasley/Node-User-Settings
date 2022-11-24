@@ -10,9 +10,15 @@
   },
   "keywords": [
     "settings",
+    "persist",
     "node",
     "sync",
-    "electron"
+    "electron",
+    "json",
+    "storage",
+    "user",
+    "app",
+    "data"
   ],
   "repository": "https://github.com/noahweasley/Node-User-Settings",
   "author": {
