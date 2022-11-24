@@ -270,7 +270,7 @@ module.exports = function (config) {
     });
 
     function createPrefFile(callbackfn) {
-      fs.open(filePath, "wx", (err, fd) => {
+      fs.open(filePath, "wx", function (err, fd) {
         if (err /** file not found or some other error occurred */) {
           return createPrefDirectory(fd, callbackfn);
         } else {
@@ -280,7 +280,7 @@ module.exports = function (config) {
 
       // create file directory
       function createPrefDirectory(fd, callbackfn) {
-        fs.mkdir(fd, { recursive: true }, (err) => {
+        fs.mkdir(fd, { recursive: true }, function (err) {
           callbackfn(err, {});
           fd?.close();
         });
@@ -362,7 +362,7 @@ module.exports = function (config) {
    */
   function hasKey_c(key, optionalFileName, callbackfn) {
     checkArgs(key);
-    getPreferencesWithCallback(optionalFileName, (err, preferenceOb) => {
+    getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) callbackfn(err);
       else callbackfn(null, Object.keys(preferenceOb).includes(key));
     });
@@ -379,7 +379,7 @@ module.exports = function (config) {
    */
   async function getState(key, defaultValue, optionalFileName) {
     await checkArgsP(key, optionalFileName);
-    return new Promise(async (resolve, _reject) => {
+    return new Promise(async function (resolve, _reject) {
       // first check if key exists
       if (await hasKey(key, optionalFileName)) {
         const preferenceOb = await getPreferences(optionalFileName);
@@ -421,11 +421,11 @@ module.exports = function (config) {
   function getState_c(key, defaultValue, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
 
-    hasKey_c(key, optionalFileName, (_err1, hasKey) => {
+    hasKey_c(key, optionalFileName, function (_err1, hasKey) {
       if (hasKey) {
-        getPreferencesWithCallback(optionalFileName, (_err2, preferenceOb) =>
-          callbackfn(null, `${preferenceOb[`${key}`]}`)
-        );
+        getPreferencesWithCallback(optionalFileName, function (_err2, preferenceOb) {
+          return callbackfn(null, `${preferenceOb[`${key}`]}`);
+        });
       } else {
         callbackfn(null, `${defaultValue}`);
       }
@@ -441,7 +441,7 @@ module.exports = function (config) {
    */
   async function getStates(states = [], optionalFileName) {
     await checkArgsP(optionalFileName);
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async function (resolve, reject) {
       if (!states instanceof Array) {
         reject(new Error("states must be a qualified Array object"));
       }
@@ -483,7 +483,7 @@ module.exports = function (config) {
     checkArgs(optionalFileName);
     if (!states instanceof Array) callbackfn(new Error("states must be a qualified Array object"));
 
-    getPreferencesWithCallback(optionalFileName, (err, preferenceOb) => {
+    getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
         return callbackfn(err);
       } else {
@@ -519,7 +519,7 @@ module.exports = function (config) {
    */
   async function setState(key, value, optionalFileName) {
     await checkArgsP(key, optionalFileName);
-    return new Promise(async (resolve, _reject) => {
+    return new Promise(async function (resolve, _reject) {
       let preferenceOb = await getPreferences(optionalFileName);
       preferenceOb[`${key}`] = `${value}`;
 
@@ -541,7 +541,7 @@ module.exports = function (config) {
   function setState_c(key, value, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);
 
-    getPreferencesWithCallback(optionalFileName, (_err, preferenceOb) => {
+    getPreferencesWithCallback(optionalFileName, function (_err, preferenceOb) {
       preferenceOb[`${key}`] = `${value}`;
       setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn);
     });
@@ -556,7 +556,7 @@ module.exports = function (config) {
    */
   async function setStates(states, optionalFileName) {
     await checkArgsP(optionalFileName);
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async function (resolve, reject) {
       if (!states instanceof Object) {
         reject(new Error("states must be a qualified JSON object"));
       }
@@ -600,7 +600,7 @@ module.exports = function (config) {
       throw new Error("states must be a qualified JSON object");
     }
 
-    getPreferencesWithCallback(optionalFileName, (err1, preferenceOb) => {
+    getPreferencesWithCallback(optionalFileName, function (err1, preferenceOb) {
       if (err1) {
         return callbackfn(err1);
       } else {
@@ -671,11 +671,11 @@ module.exports = function (config) {
   function deleteKey_c(key, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);
 
-    getPreferencesWithCallback(optionalFileName, (err1, preferenceOb) => {
+    getPreferencesWithCallback(optionalFileName, function (err1, preferenceOb) {
       if (err1) {
         return callbackfn(err1);
       } else {
-        hasKey_c(key, optionalFileName, (err2, hasKey) => {
+        hasKey_c(key, optionalFileName, function (err2, hasKey) {
           if (hasKey) {
             delete preferenceOb[`${key}`];
             callbackfn(err2, true);
