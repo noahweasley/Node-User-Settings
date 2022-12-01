@@ -25,11 +25,14 @@
 
 "use-strict";
 
+const fileLocker = require("proper-lockfile");
 const path = require("path");
 const fsp = require("fs/promises");
 const fs = require("fs");
 
-const CONSTANTS = require("./pref-constants");
+const { InitializationError } = require("./error");
+const Constants = require("./pref-constants");
+const { getLockFileName } = require("./lock-utils");
 
 /**
  * @param {*} config the configuration to be used in initialization
@@ -38,13 +41,17 @@ const CONSTANTS = require("./pref-constants");
 module.exports = function (config) {
   let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
 
-  // preferenceFileName is deprecated to enable custom file extensions
+  // throw error if not initialized
+  if (!preferenceFileDir || !preferenceFileName || !fileName || !fileExt) {
+    throw new InitializationError("You can't leave preferenceFileDir, preferenceFileName, fileName and fileExt blank");
+  }
 
+  // preferenceFileName is deprecated to enable custom file extensions
   preferenceFileName && console.warn("preferenceFileName option is deprecated, please refer to the docs");
 
   const defPreferenceFilePath = path.join(
     preferenceFileDir,
-    preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || CONSTANTS.fileExt}`
+    preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || Constants.FILE_EXT}`
   );
 
   /**
@@ -171,7 +178,9 @@ module.exports = function (config) {
 
     try {
       return fs.unlinkSync(filePath);
-    } catch (err) {}
+    } catch (err) {
+      // ignored
+    }
   }
 
   /**
@@ -481,7 +490,7 @@ module.exports = function (config) {
    */
   function getStates_c(states = [], optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
-    if (!states instanceof Array) callbackfn(new Error("states must be a qualified Array object"));
+    if (!states instanceof Array) return callbackfn(new Error("states must be a qualified Array object"));
 
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
@@ -606,7 +615,7 @@ module.exports = function (config) {
       } else {
         let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
-        setPreferencesWithCallback(preferenceOb, optionalFileName, (err2, isInserted) => {
+        setPreferencesWithCallback(preferenceOb, optionalFileName, function (err2, isInserted) {
           if (isInserted) {
             callbackfn(err2, inserted);
           } else {
