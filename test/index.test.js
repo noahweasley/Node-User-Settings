@@ -31,8 +31,6 @@ describe("Promise-based settings api tests", () => {
     expect(value).toBe("node-user-settings");
   });
 
-  test("asynchronously gets a value without optional filename ( using a callback )", async () => {});
-
   test("asynchronously sets a value with optional filename ( returning a promise )", async () => {
     let isSet = await settings.setState("moduleName", "node-user-settings", OPTIONAL_FILENAME);
     expect(isSet).toBe(true);
@@ -253,7 +251,7 @@ describe("Callback-based settings api tests", () => {
       version: "1.0.0",
       author: "noahweasley"
     };
-
+    
     settings.setStates_c(preferenceObjectToPersist, OPTIONAL_FILENAME, (err, persisted) => {
       expect(err).toBe(null);
       expect(persisted).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
