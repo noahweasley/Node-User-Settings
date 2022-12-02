@@ -25,14 +25,14 @@
 
 "use-strict";
 
-const fileLocker = require("proper-lockfile");
+// const fileLocker = require("proper-lockfile");
 const path = require("path");
 const fsp = require("fs/promises");
 const fs = require("fs");
 
 const { InitializationError } = require("./error");
 const Constants = require("./pref-constants");
-const { getLockFileName } = require("./lock-utils");
+// const { getLockFileName } = require("./lock-utils");
 
 /**
  * @param {*} config the configuration to be used in initialization
@@ -42,7 +42,7 @@ module.exports = function (config) {
   let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
 
   // throw error if not initialized
-  if (!preferenceFileDir || !preferenceFileName || !fileName || !fileExt) {
+  if (!preferenceFileDir || !fileName || !fileExt) {
     throw new InitializationError("You can't leave preferenceFileDir, preferenceFileName, fileName and fileExt blank");
   }
 
@@ -161,9 +161,11 @@ module.exports = function (config) {
     let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
-      return await fsp.unlink(filePath);
-    } catch (err) {}
-    return;
+      await fsp.unlink(filePath);
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
   /**
@@ -177,9 +179,10 @@ module.exports = function (config) {
     let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
-      return fs.unlinkSync(filePath);
+      fs.unlinkSync(filePath);
+      return true;
     } catch (err) {
-      // ignored
+      return false;
     }
   }
 
@@ -194,7 +197,7 @@ module.exports = function (config) {
   function deleteFile_c(optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
-    fs.unlink(filePath, callbackfn);
+    fs.unlink(filePath, (err) => callbackfn(err, err ? false : true));
   }
 
   // asynchronously read the preference file from disk and then return an object representation of the file
