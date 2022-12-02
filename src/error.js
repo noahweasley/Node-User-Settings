@@ -28,4 +28,21 @@
 /**
  * Error in module initialization
  */
-module.exports.InitializationError = class _error1 extends Error {};
+class InitializationError extends Error {
+  constructor(message) {
+    super(message);
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+/**
+ * Error in arguments
+ */
+class IllegalArgumentError extends Error {
+  constructor(message) {
+    super(message);
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+module.exports = { InitializationError, IllegalArgumentError };
