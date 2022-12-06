@@ -8,6 +8,8 @@ A universal but simple node library to implement user settings, but originally b
 
 All of them are available for use !
 
+_Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you like this little package and are using it. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
+
 ## Installation and API Usage
 
 ---
@@ -76,7 +78,7 @@ The file extension of the file used to persist preference
 // preferenceFileName is optional, it defaults to a Settings.json file
 
 const settings = require("node-user-settings")({
-  preferenceFileDir: "path/to/save/settings",
+  preferenceFileDir: "path/to/save/preference",
   preferenceFileName: "Settings.json",
   fileName: "Settings",
   fileExt: "json"
@@ -120,6 +122,33 @@ _A String_. The default save path to the preference
 
 ```javascript
 const path = getDefaultPreferenceFilePath();
+console.log(path);
+```
+
+### ` setDefaultPreferenceFilePath(filePath)`
+
+Sets the default save path to the preference.
+
+_Note_: This method is synchronous, and it is to be used in initialization only. Even though you tried to re-set the default save path, it would throw an error, so you should use it to explicitly set the default preference file path immediately after importing or _requiring_ the module
+
+### Parameter
+
+---
+
+### filePath
+
+#### Type: `String`
+
+The file path to save preference
+
+#### Returns
+
+_A String_. The default save path to the preference
+
+**Example**
+
+```javascript
+const path = setDefaultPreferenceFilePath("path/to/save/preference");
 console.log(path);
 ```
 
