@@ -1,4 +1,5 @@
-const { describe, expect, test, afterEach, beforeEach } = require("@jest/globals");
+const { describe, expect, test, afterEach, beforeEach, it } = require("@jest/globals");
+// const { pumpSettings, deleteSettings } = require("./utils");
 const mockData = require("./mock-data.json");
 require("dotenv").config();
 
@@ -18,6 +19,23 @@ afterEach(async () => {
 beforeEach(async () => {
   await settings.serialize(mockData);
   await settings.serialize(mockData, OPTIONAL_FILENAME);
+});
+
+describe("General settings api tests", () => {
+  test("throws an exception while trying to set a previously set preference file path", () => {
+    expect(() => settings.setDefaultPreferenceFilePath("./")).toThrowError();
+  });
+
+  test("throws an exception while trying to set an invalid file format", () => {
+    const settings = require("../src/index")();
+    expect(() => settings.setDefaultPreferenceFilePath("./")).toThrowError();
+  });
+
+  test("sets a new preference file path if not initialized previously", () => {
+    const settings = require("../src/index")();
+    let path = settings.setDefaultPreferenceFilePath(process.env.NODE_USER_SETTINGS_FILE_PATH);
+    expect(path).toBe(process.env.NODE_USER_SETTINGS_FILE_PATH);
+  });
 });
 
 describe("Promise-based settings api tests", () => {
