@@ -29,39 +29,63 @@
 const path = require("path");
 const fsp = require("fs/promises");
 const fs = require("fs");
-
-const { InitializationError } = require("./error");
 const Constants = require("./pref-constants");
-// const { getLockFileName } = require("./lock-utils");
+const { InitializationError, IllegalArgumentError, UnModifiableStateError } = require("./error");
 
 /**
  * @param {*} config the configuration to be used in initialization
  * @returns the required APIs
  */
-module.exports = function (config) {
+module.exports = function (config = {}) {
   let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
-
-  // throw error if not initialized
-  if (!preferenceFileDir || !fileName || !fileExt) {
-    throw new InitializationError("You can't leave preferenceFileDir, preferenceFileName, fileName and fileExt blank");
-  }
 
   // preferenceFileName is deprecated to enable custom file extensions
   preferenceFileName && console.warn("preferenceFileName option is deprecated, please refer to the docs");
 
-  const defPreferenceFilePath = path.join(
-    preferenceFileDir,
-    preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || Constants.FILE_EXT}`
-  );
+  let defPreferenceFilePath;
+
+  if ((preferenceFileDir && preferenceFileName) || (preferenceFileDir && fileName && fileExt)) {
+    defPreferenceFilePath = path.join(
+      preferenceFileDir,
+      preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || Constants.FILE_EXT}`
+    );
+  }
 
   /**
    * Gets the default save path to the preference
    *
    * @returns {*} the default save path to the preference
    */
-  const getDefaultPreferenceFilePath = () => defPreferenceFilePath;
+  function getDefaultPreferenceFilePath() {
+    return defPreferenceFilePath;
+  }
+
+  /**
+   * Sets the default save path to the preference
+   *
+   * @returns {*} the default save path to the preference
+   */
+  function setDefaultPreferenceFilePath(filePath) {
+    if (defPreferenceFilePath) {
+      throw new UnModifiableStateError("Default Preference file path has already been set and cannot be changed");
+    } else {
+      try {
+        if (!fs.statSync(filePath).isFile()) throw new IllegalArgumentError(`${filePath} is invalid`);
+      } catch (err) {
+        // throw only my error, isFile() throws error if it can't find the file specified
+        if (err instanceof IllegalArgumentError) throw err;
+      }
+    }
+
+    return (defPreferenceFilePath = filePath);
+  }
 
   function getPreferenceFilePath(optionalFileName) {
+    // throw error if not initialized
+    if (!defPreferenceFilePath) {
+      throw new InitializationError("You failed to initialize the preference API, no proper file path was found");
+    }
+
     return optionalFileName ? path.join(preferenceFileDir, optionalFileName) : defPreferenceFilePath;
   }
 
@@ -69,7 +93,7 @@ module.exports = function (config) {
   function checkArgs(...args) {
     args.forEach(function (arg) {
       if (arg && !args instanceof String) {
-        throw new Error(`${arg} must be a String`);
+        throw new IllegalArgumentError(`${arg} must be a String`);
       }
     });
   }
@@ -78,7 +102,7 @@ module.exports = function (config) {
   function checkArgsP(...args) {
     args.forEach(function (arg) {
       if (arg && !args instanceof String) {
-        return Promise.reject(new Error(`${arg} must be a String`));
+        return Promise.reject(new IllegalArgumentError(`${arg} must be a String`));
       }
     });
 
@@ -101,7 +125,7 @@ module.exports = function (config) {
    *
    * @param {*} preferenceOb       A JSON object to be serialized and persisted
    * @param {*} optionalFileName   An optional filename used to persist the settings. This can be left _null_
-   * @param {*} callbackfn        A Node-Js qualified callback with any error that occurred as the first argument
+   * @param {*} callbackfn        A Node-Js qualified callback with any IllegalArgumentError that occurred as the first argument
    *                              and a Boolean; if the file was successfully persisted
    */
   function serialize_c(preferenceOb, optionalFileName, callbackfn) {
@@ -283,7 +307,7 @@ module.exports = function (config) {
 
     function createPrefFile(callbackfn) {
       fs.open(filePath, "wx", function (err, fd) {
-        if (err /** file not found or some other error occurred */) {
+        if (err /* file not found or some other error occurred */) {
           return createPrefDirectory(fd, callbackfn);
         } else {
           fs.writeFile(fd, "{}", (err) => callbackfn(err, {}));
@@ -455,7 +479,7 @@ module.exports = function (config) {
     await checkArgsP(optionalFileName);
     return new Promise(async function (resolve, reject) {
       if (!states instanceof Array) {
-        reject(new Error("states must be a qualified Array object"));
+        reject(new IllegalArgumentError("states must be a qualified Array object"));
       }
 
       const preferenceOb = await getPreferences(optionalFileName);
@@ -476,7 +500,7 @@ module.exports = function (config) {
   function getStatesSync(states = [], optionalFileName) {
     checkArgs(optionalFileName);
     if (!states instanceof Array) {
-      throw new Error("states must be a qualified Array object");
+      throw new IllegalArgumentError("states must be a qualified Array object");
     }
     const preferenceOb = getPreferencesSync(optionalFileName);
     let values = states.map((key) => `${preferenceOb[`${key}`]}`);
@@ -493,7 +517,8 @@ module.exports = function (config) {
    */
   function getStates_c(states = [], optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
-    if (!states instanceof Array) return callbackfn(new Error("states must be a qualified Array object"));
+    if (!states instanceof Array)
+      return callbackfn(new IllegalArgumentError("states must be a qualified Array object"));
 
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
@@ -570,7 +595,7 @@ module.exports = function (config) {
     await checkArgsP(optionalFileName);
     return new Promise(async function (resolve, reject) {
       if (!states instanceof Object) {
-        reject(new Error("states must be a qualified JSON object"));
+        reject(new IllegalArgumentError("states must be a qualified JSON object"));
       }
       let preferenceOb = await getPreferences(optionalFileName);
       let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
@@ -591,7 +616,7 @@ module.exports = function (config) {
   function setStatesSync(states, optionalFileName) {
     checkArgs(optionalFileName);
     if (!states instanceof Object) {
-      throw new Error("states must be a qualified JSON object");
+      throw new IllegalArgumentError("states must be a qualified JSON object");
     }
     let preferenceOb = getPreferencesSync(optionalFileName);
     let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
@@ -609,7 +634,7 @@ module.exports = function (config) {
   function setStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
     if (!states instanceof Object) {
-      throw new Error("states must be a qualified JSON object");
+      throw new IllegalArgumentError("states must be a qualified JSON object");
     }
 
     getPreferencesWithCallback(optionalFileName, function (err1, preferenceOb) {
@@ -702,6 +727,7 @@ module.exports = function (config) {
 
   const DICTIONARY = Object.freeze({
     getDefaultPreferenceFilePath,
+    setDefaultPreferenceFilePath,
     getState,
     getState_c,
     getStateSync,
