@@ -121,7 +121,7 @@ _A String_. The default save path to the preference
 **Example**
 
 ```javascript
-const path = getDefaultPreferenceFilePath();
+const path = settings.getDefaultPreferenceFilePath();
 console.log(path);
 ```
 
@@ -148,7 +148,7 @@ _A String_. The default save path to the preference
 **Example**
 
 ```javascript
-const path = setDefaultPreferenceFilePath("path/to/save/preference");
+const path = settings.setDefaultPreferenceFilePath("path/to/save/preference");
 console.log(path);
 ```
 
