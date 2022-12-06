@@ -8,6 +8,8 @@ A universal but simple node library to implement user settings, but originally b
 
 All of them are available for use !
 
+_Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you like this little package and are using it. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
+
 ## Installation and API Usage
 
 ---
@@ -26,19 +28,19 @@ npm i node-user-settings --save
 
 ### Please Note
 
-- For now, callback-based methods naming are weird, I know. I am going to fix it in a major release in the future.
+- For now, callback-based methods naming are weird, I know. I am going to fix it in a major release; in the future.
 
-- You can specify an optional filename in which settings would be saved or retrieved by using the last arguments in each of the stated functions. An optional filename isn't required and can be left blank.
+- You can specify an optional filename in which settings would be saved or retrieved. An optional filename isn't required and can be left blank.
 
-- Adding a sync as suffix to each functions, provides you with the synchronous version
+- A new preference file would be created after using the `optionalFileName` argument, with the persisted preference in it.
 
-- The last argument would always be an optional filename. A new file would be created after using the third argument
+- Adding a sync as suffix to the promise-based functions, provides you with it's synchronous alternatives.
 
 - `preferenceFileName` is now deprecated as of v1.1.0 and you should use, `fileName` and `fileExt` instead to set the file name to be used to save settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using `preferenceFileName` for future versions, because it would be removed soon.
 
 - Leaving `fileExt` config option blank but setting a `fileName`, results in a file with the `.json` file extension.
 
-- It is recommended that you only initialize the API once and then pass the initialized instance around using **Dependency Injection**. Even though you don't do this, it's still possible that the API would work as you want because Node-JS automatically caches a module after **requiring** them. But again, I wouldn't recommend you do that!
+- It is recommended that you only initialize the API once and then pass the initialized instance around using **Dependency Injection**. Even though you don't do this, it's still possible that the API would work as you want because Node JS automatically caches a module after **requiring** them. But again, I wouldn't recommend you do that!
 
 ## Setup and Initialization
 
@@ -51,6 +53,8 @@ const settings = require("node-user-settings)([options]);
 ### Options
 
 #### Type: `Object`
+
+### Keys
 
 #### `preferenceFileName` (deprecated)
 
@@ -74,13 +78,32 @@ The file extension of the file used to persist preference
 // preferenceFileName is optional, it defaults to a Settings.json file
 
 const settings = require("node-user-settings")({
-  preferenceFileDir: "path/to/save/settings",
+  preferenceFileDir: "path/to/save/preference",
   preferenceFileName: "Settings.json",
   fileName: "Settings",
   fileExt: "json"
 });
 
-// the *Settings* variable that was imported is what would be used to call the following methods
+// the *Settings* variable in which the module was imported and stored, is what would be used to call the following methods listed
+```
+
+For Electron Users
+
+```javascript
+// preferenceFileName is optional, it defaults to a Settings.json file
+
+const { app } = require("electron");
+const { join } = require("path");
+
+const settings = require("node-user-settings")({
+  /* this is the recommended path to persist preference */
+  preferenceFileDir: join(app.getPath("userData"), "User", "Preferences"),
+  preferenceFileName: "Settings.json",
+  fileName: "Settings",
+  fileExt: "json"
+});
+
+// the *Settings* variable in which the module was imported and stored, is what would be used to call the following methods listed
 ```
 
 ## General Utility Method
@@ -99,6 +122,33 @@ _A String_. The default save path to the preference
 
 ```javascript
 const path = getDefaultPreferenceFilePath();
+console.log(path);
+```
+
+### ` setDefaultPreferenceFilePath(filePath)`
+
+Sets the default save path to the preference.
+
+_Note_: This method is synchronous, and it is to be used in initialization only. Even though you tried to re-set the default save path, it would throw an error, so you should use it to explicitly set the default preference file path immediately after importing or _requiring_ the module
+
+### Parameter
+
+---
+
+### filePath
+
+#### Type: `String`
+
+The file path to save preference
+
+#### Returns
+
+_A String_. The default save path to the preference
+
+**Example**
+
+```javascript
+const path = setDefaultPreferenceFilePath("path/to/save/preference");
 console.log(path);
 ```
 
@@ -479,7 +529,7 @@ A Node-Js qualified callback with any error that occurred as the first argument 
 **Example**
 
 ```javascript
-settings.setState("key", "value", optionalFileName, function (err, isSet) {
+settings.setState_c("key", "value", optionalFileName, function (err, isSet) {
   if (err) console.error(err);
   else console.log(`Is value set: ${isSet}`);
 });
@@ -521,7 +571,7 @@ const map = {
   author: "noahweasley"
 };
 
-settings.setStates(map, optionalFileName, function (err, persisted) {
+settings.setStates_c(map, optionalFileName, function (err, persisted) {
   if (err) console.error(err);
   else console.log(`This values were set: ${Array.toString(persisted)}`);
 });

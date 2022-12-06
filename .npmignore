@@ -1,7 +1,6 @@
 node_modules
 .env
-debug.js
-Settings.json
+debug
 # npm ignore
 .github
 .vscode
