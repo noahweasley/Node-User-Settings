@@ -45,4 +45,14 @@ class IllegalArgumentError extends Error {
   }
 }
 
-module.exports = { InitializationError, IllegalArgumentError };
+/**
+ * Error while modifying state
+ */
+class UnModifiableStateError extends Error {
+  constructor(message) {
+    super(message);
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+module.exports = { InitializationError, IllegalArgumentError, UnModifiableStateError };
