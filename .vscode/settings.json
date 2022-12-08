@@ -1,7 +1,7 @@
 {
     "workbench.colorTheme": "Community Material Theme Darker High Contrast",
     "git.ignoreLimitWarning": true,
-    "explorer.excludeGitIgnore": true,
+    "explorer.excludeGitIgnore": false,
     "cSpell.words": [
         "buymeacoffee",
         "noahweasley"
