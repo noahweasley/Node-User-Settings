@@ -5,8 +5,12 @@
 - Before running `$ npm test` , make sure you have a `.env` file placed at the root of your project and it should have this declaration
 
 ```dosini
+# replace values with a valid file path
+
+OPTIONAL_FILENAME="settings.json"
 NODE_USER_SETTINGS_DIRECTORY="directory/to/save/settings/file"
 NODE_USER_SETTINGS_FILE_PATH="filename/to/save/settings"
+NODE_USER_SETTINGS_OPTIONAL_FILE_PATH="filename/to/save/optional/settings"
 ```
 
 - After making changes to the APIs, also re-run tests to verify that nothing was broken.
