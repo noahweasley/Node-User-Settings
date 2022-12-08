@@ -1,7 +1,8 @@
-const { describe, expect, test, afterEach, beforeEach, it } = require("@jest/globals");
+const { describe, expect, test, afterEach, beforeEach } = require("@jest/globals");
 // const { pumpSettings, deleteSettings } = require("./utils");
 const mockData = require("./mock-data.json");
 require("dotenv").config();
+const path = require("path");
 
 const settings = require("../src/index")({
   preferenceFileDir: process.env.NODE_USER_SETTINGS_DIRECTORY,
@@ -9,16 +10,14 @@ const settings = require("../src/index")({
   fileExt: "json"
 });
 
-const OPTIONAL_FILENAME = "UserSettings.json";
-
 afterEach(async () => {
   await settings.deleteFile();
-  await settings.deleteFile(OPTIONAL_FILENAME);
+  await settings.deleteFile(process.env.OPTIONAL_FILENAME);
 });
 
 beforeEach(async () => {
   await settings.serialize(mockData);
-  await settings.serialize(mockData, OPTIONAL_FILENAME);
+  await settings.serialize(mockData, process.env.OPTIONAL_FILENAME);
 });
 
 describe("General settings api tests", () => {
@@ -27,7 +26,7 @@ describe("General settings api tests", () => {
   });
 
   test("throws an exception while trying to set an invalid file format", () => {
-    const settings = require("../src/index")();
+    const settings = require("../src/index").defaults;
     expect(() => settings.setDefaultPreferenceFilePath("./")).toThrowError();
   });
 
@@ -50,12 +49,12 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously sets a value with optional filename ( returning a promise )", async () => {
-    let isSet = await settings.setState("moduleName", "node-user-settings", OPTIONAL_FILENAME);
+    let isSet = await settings.setState("moduleName", "node-user-settings", process.env.OPTIONAL_FILENAME);
     expect(isSet).toBe(true);
   });
 
   test("asynchronously gets a value with optional filename ( returning a promise )", async () => {
-    let value = await settings.getState("moduleName", OPTIONAL_FILENAME);
+    let value = await settings.getState("moduleName", process.env.OPTIONAL_FILENAME);
     expect(value).toBe("node-user-settings");
   });
 
@@ -80,13 +79,13 @@ describe("Promise-based settings api tests", () => {
         version: "1.0.0",
         author: "noahweasley"
       },
-      OPTIONAL_FILENAME
+      process.env.OPTIONAL_FILENAME
     );
     expect(persisted).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
 
   test("asynchronously get multiple values with optional filename ( returning a promise )", async () => {
-    let values = await settings.getStates(["moduleName", "version", "author"], OPTIONAL_FILENAME);
+    let values = await settings.getStates(["moduleName", "version", "author"], process.env.OPTIONAL_FILENAME);
     expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
 
@@ -96,7 +95,7 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously delete a single entry with optional filename ( returning a promise )", async () => {
-    let isDeleted = await settings.deleteKey("author", OPTIONAL_FILENAME);
+    let isDeleted = await settings.deleteKey("author", process.env.OPTIONAL_FILENAME);
     expect(isDeleted).toBe(true);
   });
 
@@ -106,7 +105,7 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously check if a single entry exists with optional filename  ( returning a promise )", async () => {
-    let hasKey = await settings.hasKey("moduleName", OPTIONAL_FILENAME);
+    let hasKey = await settings.hasKey("moduleName", process.env.OPTIONAL_FILENAME);
     expect(hasKey).toBe(true);
   });
 
@@ -116,7 +115,7 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously deletes preference file without optional filename ( returning a promise )", async () => {
-    let isDeleted = await settings.deleteFile(OPTIONAL_FILENAME);
+    let isDeleted = await settings.deleteFile(process.env.OPTIONAL_FILENAME);
     expect(isDeleted).toBe(true);
   });
 });
@@ -133,12 +132,12 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously sets a value with optional filename", () => {
-    let isSet = settings.setStateSync("moduleName", "node-user-settings", OPTIONAL_FILENAME);
+    let isSet = settings.setStateSync("moduleName", "node-user-settings", process.env.OPTIONAL_FILENAME);
     expect(isSet).toBe(true);
   });
 
   test("synchronously gets a value with optional filename", () => {
-    let value = settings.getStateSync("moduleName", OPTIONAL_FILENAME);
+    let value = settings.getStateSync("moduleName", process.env.OPTIONAL_FILENAME);
     expect(value).toBe("node-user-settings");
   });
 
@@ -163,13 +162,13 @@ describe("Synchronous-based settings api tests", () => {
         version: "1.0.0",
         author: "noahweasley"
       },
-      OPTIONAL_FILENAME
+      process.env.OPTIONAL_FILENAME
     );
     expect(persisted).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
 
   test("synchronously get multiple values with optional filename", () => {
-    let values = settings.getStatesSync(["moduleName", "version", "author"], OPTIONAL_FILENAME);
+    let values = settings.getStatesSync(["moduleName", "version", "author"], process.env.OPTIONAL_FILENAME);
     expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
 
@@ -179,7 +178,7 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously delete a single entry with optional filename", () => {
-    let isDeleted = settings.deleteKeySync("version", OPTIONAL_FILENAME);
+    let isDeleted = settings.deleteKeySync("version", process.env.OPTIONAL_FILENAME);
     expect(isDeleted).toBe(true);
   });
 
@@ -189,7 +188,7 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously check if a single entry exists with optional filename", () => {
-    let hasKey = settings.hasKeySync("version", OPTIONAL_FILENAME);
+    let hasKey = settings.hasKeySync("version", process.env.OPTIONAL_FILENAME);
     expect(hasKey).toBe(true);
   });
 
@@ -199,7 +198,7 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously deletes preference file with optional filename", () => {
-    let isDeleted = settings.deleteFileSync(OPTIONAL_FILENAME);
+    let isDeleted = settings.deleteFileSync(process.env.OPTIONAL_FILENAME);
     expect(isDeleted).toBe(true);
   });
 });
@@ -214,7 +213,7 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously check if a single entry exists with optional filename", (done) => {
-    settings.hasKey_c("version", OPTIONAL_FILENAME, (err, hasKey) => {
+    settings.hasKey_c("version", process.env.OPTIONAL_FILENAME, (err, hasKey) => {
       expect(err).toBe(null);
       expect(hasKey).toBe(true);
       done();
@@ -230,7 +229,7 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously gets a value, using callbacks with optional filename", (done) => {
-    settings.getState_c("moduleName", null, OPTIONAL_FILENAME, (err, value) => {
+    settings.getState_c("moduleName", null, process.env.OPTIONAL_FILENAME, (err, value) => {
       expect(err).toBe(null);
       expect(value).toBe("node-user-settings");
       done();
@@ -246,7 +245,7 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously sets a value with optional filename, using callback", (done) => {
-    settings.setState_c("moduleName", "node-user-settings", OPTIONAL_FILENAME, (err, isSet) => {
+    settings.setState_c("moduleName", "node-user-settings", process.env.OPTIONAL_FILENAME, (err, isSet) => {
       expect(err).toBe(null);
       expect(isSet).toBe(true);
       done();
@@ -262,7 +261,7 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously gets multiple values with optional filename, using callback", (done) => {
-    settings.getStates_c(["moduleName", "version", "author"], OPTIONAL_FILENAME, (err, values) => {
+    settings.getStates_c(["moduleName", "version", "author"], process.env.OPTIONAL_FILENAME, (err, values) => {
       expect(err).toBe(null);
       expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
       done();
@@ -290,7 +289,7 @@ describe("Callback-based settings api tests", () => {
       author: "noahweasley"
     };
 
-    settings.setStates_c(preferenceObjectToPersist, OPTIONAL_FILENAME, (err, persisted) => {
+    settings.setStates_c(preferenceObjectToPersist, process.env.OPTIONAL_FILENAME, (err, persisted) => {
       expect(err).toBe(null);
       expect(persisted).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
       done();
@@ -306,10 +305,26 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously delete preference file with optional filename, using callback", (done) => {
-    settings.deleteFile_c(OPTIONAL_FILENAME, (err, isDeleted) => {
+    settings.deleteFile_c(process.env.OPTIONAL_FILENAME, (err, isDeleted) => {
       expect(err).toBe(null);
       expect(isDeleted).toBe(true);
       done();
     });
+  });
+});
+
+describe("Anonymous API tests", () => {
+  test("overrides preference file path when optional file path is specified", () => {
+    // @TODO fix bug: path gotten from dotenv contains extra slashes, even when it doesn't
+    const normalizedPath = path.normalize(process.env.NODE_USER_SETTINGS_OPTIONAL_FILE_PATH);
+    
+    const settings = require("../src/index").defaults;
+    settings.setDefaultPreferenceFilePath(process.env.NODE_USER_SETTINGS_FILE_PATH);
+
+    let hasKey = settings.hasKeySync("moduleName", process.env.OPTIONAL_FILENAME);
+    let newFilePathAfterOverride = settings.getTempPreferenceOptionalFilePath();
+
+    expect(hasKey).toBe(true);
+    expect(newFilePathAfterOverride).toBe(normalizedPath);
   });
 });

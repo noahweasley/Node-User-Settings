@@ -46,6 +46,16 @@ class IllegalArgumentError extends Error {
 }
 
 /**
+ * Error in preference state
+ */
+class IllegalStateError extends Error {
+  constructor(message) {
+    super(message);
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+/**
  * Error while modifying state
  */
 class UnModifiableStateError extends Error {
@@ -55,4 +65,4 @@ class UnModifiableStateError extends Error {
   }
 }
 
-module.exports = { InitializationError, IllegalArgumentError, UnModifiableStateError };
+module.exports = { InitializationError, IllegalStateError, IllegalArgumentError, UnModifiableStateError };

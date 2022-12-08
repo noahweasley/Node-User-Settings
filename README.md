@@ -36,7 +36,7 @@ npm i node-user-settings --save
 
 - Adding a sync as suffix to the promise-based functions, provides you with it's synchronous alternatives.
 
-- `preferenceFileName` is now deprecated as of v1.1.0 and you should use, `fileName` and `fileExt` instead to set the file name to be used to save settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using `preferenceFileName` for future versions, because it would be removed soon.
+- `preferenceFileName` is now deprecated as of v1.1.0 and you should use, `fileName` and `fileExt` instead to set the file name to be used to persist settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using `preferenceFileName` for future versions, because it would be removed soon.
 
 - Leaving `fileExt` config option blank but setting a `fileName`, results in a file with the `.json` file extension.
 
@@ -46,9 +46,19 @@ npm i node-user-settings --save
 
 ---
 
+Initialization using exported method
+
 ```javascript
 const settings = require("node-user-settings)([options]);
 ```
+
+In case you don't want to initialize `options` using exported method, initialize it this way
+
+```javascript
+const settings = require("node-user-settings").defaults;
+```
+
+**Please note**: You must call `settings.setDefaultPreferenceFilePath()` after using `.defaults`, else an error would be thrown
 
 ### Options
 
@@ -125,9 +135,27 @@ const path = settings.getDefaultPreferenceFilePath();
 console.log(path);
 ```
 
+### `  getTempPreferenceOptionalFilePath()`
+
+Gets the optional save path to the preference, if an optional file path was previously specified
+
+**Please note**: You mostly never need to use this method at all! Never include it in production code,
+use only in development mode
+
+#### Returns
+
+_A String_. The temporary save path to the preference
+
+**Example**
+
+```javascript
+const tmpPath = settings.getTempPreferenceOptionalFilePath();
+console.log(tmpPath);
+```
+
 ### ` setDefaultPreferenceFilePath(filePath)`
 
-Sets the default save path to the preference.
+Sets the default path to the preference file
 
 _Note_: This method is synchronous, and it is to be used in initialization only. Even though you tried to re-set the default save path, it would throw an error, so you should use it to explicitly set the default preference file path immediately after importing or _requiring_ the module
 
@@ -139,7 +167,7 @@ _Note_: This method is synchronous, and it is to be used in initialization only.
 
 #### Type: `String`
 
-The file path to save preference
+The file path to persist preference
 
 #### Returns
 
@@ -1077,3 +1105,9 @@ _A String_. The persisted object as it exists in preference
 const data = settings.deserializeSync(optionalFileName);
 console.log(data);
 ```
+
+## License
+
+---
+
+Node User Settings is licensed to everyone under the MIT License
