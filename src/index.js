@@ -90,7 +90,7 @@ function __exports(config = {}) {
    * Sets the default path to the preference file
    *
    * @param {string}   filePath - the file path to persist preference
-   * @returns {string}          - the file path to persist preference
+   * @returns {string}            the file path to persist preference
    */
   function setDefaultPreferenceFilePath(filePath) {
     if (defaultPreferenceFilePath) {
@@ -112,7 +112,7 @@ function __exports(config = {}) {
    *
    * @param {JSON}               preferenceOb     - a JSON object to be serialized and persisted
    * @param {string}             optionalFileName - an optional filename used to persist the settings. This can be left null
-   * @returns {Promise<boolean>}                  - a Promise that resolves to a boolean indicating if it was persisted
+   * @returns {Promise<boolean>}                    a Promise that resolves to a boolean indicating if it was persisted
    */
   async function serialize(preferenceOb, optionalFileName) {
     return await setPreferences(preferenceOb, optionalFileName);
@@ -655,9 +655,9 @@ function __exports(config = {}) {
   /**
    * Synchronously deletes a single entry
    *
-   * @param {string}    key               - ahe key in the preference in which it's value would deleted
+   * @param {string}    key               - the key in the preference in which it's value would deleted
    * @param {string}    optionalFileName  - an optional filename used to persist the settings. This can be left null
-   * @returns {boolean}                - indicating if the key was successfully deleted
+   * @returns {boolean}                     indicating if the key was successfully deleted
    */
   function deleteKeySync(key, optionalFileName) {
     checkArgs(key, optionalFileName);
