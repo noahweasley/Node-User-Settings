@@ -388,7 +388,7 @@ function __exports(config = {}) {
    *
    * @param {string}    key                 - the key in the preference in which it's value would be checked for it's existence
    * @param {string}    optionalFileName    - an optional filename used to do the check. This can be left null
-   * @param {Function}  callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a boolean; indicating if the key exists in the persisted preference
+   * @param {Function}  callbackfn          - a Node-Js qualified callback with any error that occurred as the first argument and a boolean; indicating if the key exists in the persisted preference
    */
   function hasKey_c(key, optionalFileName, callbackfn) {
     checkArgs(key);
@@ -446,10 +446,12 @@ function __exports(config = {}) {
   function getState_c(key, defaultValue, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
 
-    hasKey_c(key, optionalFileName, function (_err1, hasKey) {
-      if (hasKey) {
-        getPreferencesWithCallback(optionalFileName, function (_err2, preferenceOb) {
-          return callbackfn(null, `${preferenceOb[`${key}`]}`);
+    hasKey_c(key, optionalFileName, function (err1, hasKey) {
+      if (err1) {
+        callbackfn(err1, defaultValue);
+      } else if (hasKey) {
+        getPreferencesWithCallback(optionalFileName, function (err2, preferenceOb) {
+          return callbackfn(err2, `${preferenceOb[`${key}`]}`);
         });
       } else {
         callbackfn(null, `${defaultValue}`);
@@ -506,10 +508,10 @@ function __exports(config = {}) {
 
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
-        return callbackfn(err);
+        callbackfn(err);
       } else {
         let values = states.map((key) => `${preferenceOb[`${key}`]}`);
-        return callbackfn(null, values);
+        callbackfn(null, values);
       }
     });
   }
@@ -559,9 +561,13 @@ function __exports(config = {}) {
   function setState_c(key, value, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);
 
-    getPreferencesWithCallback(optionalFileName, function (_err, preferenceOb) {
-      preferenceOb[`${key}`] = `${value}`;
-      setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn);
+    getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
+      if (err) {
+        callbackfn(err);
+      } else {
+        preferenceOb[`${key}`] = `${value}`;
+        setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn);
+      }
     });
   }
 
@@ -611,7 +617,7 @@ function __exports(config = {}) {
   function setStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
     if (!states instanceof Object) {
-      throw new IllegalArgumentError("states must be a qualified JSON object");
+      return callbackfn(new IllegalArgumentError("states must be a qualified JSON object"));
     }
 
     getPreferencesWithCallback(optionalFileName, function (err1, preferenceOb) {
