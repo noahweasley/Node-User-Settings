@@ -1,5 +1,7 @@
 # Node User Settings
 
+![Licence](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases)  ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)  ![Bundle size](https://img.shields.io/bundlephobia/min/node-user-settings?color=red&label=bundle%20size&logo=red&logoColor=white)
+
 A universal but simple node library to implement user settings, but originally built to work with Electron.js.
 
 - Synchronous functions
