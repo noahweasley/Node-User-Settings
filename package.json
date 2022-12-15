@@ -1,12 +1,13 @@
 {
   "name": "node-user-settings",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A universal but simple node library to implement user settings, originally built to work with Electron.js",
   "main": "./src/index.js",
   "scripts": {
     "test": "jest",
     "debug": "jest --detectOpenHandles --forceExit",
-    "clear": "jest --clearCache"
+    "clear": "jest --clearCache",
+    "reset": "del \"examples\\*.json\""
   },
   "keywords": [
     "settings",
