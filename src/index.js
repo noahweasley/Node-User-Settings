@@ -38,7 +38,7 @@ function __exports(config = {}) {
   // preferenceFileName is deprecated to enable custom file extensions
   preferenceFileName && console.warn("preferenceFileName option is deprecated, please refer to the docs");
 
-  let defaultPreferenceFilePath, optionalPreferenceFilePath, isPathReset;
+  let defaultPreferenceFilePath, optionalPreferenceFilePath;
 
   if ((preferenceFileDir && preferenceFileName) || (preferenceFileDir && fileName && fileExt)) {
     defaultPreferenceFilePath = path.join(
@@ -53,15 +53,11 @@ function __exports(config = {}) {
       throw new InitializationError("You failed to initialize the preference API, no proper file path was found");
     }
 
-    if (optionalFileName && !isPathReset) {
-      /* reset path only once */
-      isPathReset = true;
-      let joinedPath = path.join(preferenceFileDir || path.dirname(defaultPreferenceFilePath), optionalFileName);
-      optionalPreferenceFilePath = path.normalize(joinedPath); // path is reset now
-
-      return optionalPreferenceFilePath;
+    if (optionalFileName) {
+      let joinedPath = path.normalize(path.join(preferenceFileDir, optionalFileName));
+      return (optionalPreferenceFilePath = joinedPath);
     } else {
-      return defaultPreferenceFilePath;
+      return path.normalize(defaultPreferenceFilePath);
     }
   }
 
@@ -71,7 +67,7 @@ function __exports(config = {}) {
    * @returns {string} the default save path to the preference
    */
   function getDefaultPreferenceFilePath() {
-    return defaultPreferenceFilePath;
+    return path.normalize(defaultPreferenceFilePath);
   }
 
   /**
@@ -83,7 +79,7 @@ function __exports(config = {}) {
    * @returns {string} the temporary save path to the preference
    */
   function getTempPreferenceOptionalFilePath() {
-    return optionalPreferenceFilePath;
+    return path.normalize(optionalPreferenceFilePath);
   }
 
   /**
@@ -103,6 +99,13 @@ function __exports(config = {}) {
         if (err instanceof IllegalStateError) throw err;
       }
     }
+
+    preferenceFileDir = path.dirname(filePath);
+    // get only file name
+    const extname = path.extname(filePath);
+    fileExt = extname;
+    const basename = path.basename(filePath);
+    fileName = basename.substring(0, basename.indexOf(extname));
 
     return (defaultPreferenceFilePath = filePath);
   }
@@ -228,23 +231,23 @@ function __exports(config = {}) {
       let data = await fsp.readFile(filePath, "utf8");
       return JSON.parse(data);
     } catch (err) {
-      return createPrefFile();
+      return createPreferenceFile();
     }
 
-    async function createPrefFile() {
+    async function createPreferenceFile() {
       let filehandle;
       try {
         filehandle = await fsp.open(filePath, "wx");
-        await fsp.writeFile(filehandle, "{}");
+        await fsp.writeFile(filehandle, "{}", "utf-8");
       } catch (err) {
         if (err.code === "EEXIST") return {};
-        else if (err.code === "ENOENT") createPrefDirectory(filePath);
+        else if (err.code === "ENOENT") createPreferenceDirectory(filePath);
         else return {};
       } finally {
         await filehandle?.close();
       }
 
-      async function createPrefDirectory() {
+      async function createPreferenceDirectory() {
         try {
           await fsp.mkdir(preferenceFileDir, {
             recursive: true
@@ -269,18 +272,18 @@ function __exports(config = {}) {
       let data = fs.readFileSync(filePath, "utf8");
       return JSON.parse(data);
     } catch (err) {
-      return createPrefFileSync();
+      return createPreferenceFileSync();
     }
 
-    function createPrefFileSync() {
+    function createPreferenceFileSync() {
       if (fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, "{}");
+        fs.writeFileSync(filePath, "{}", "utf-8");
         return {};
       } else {
-        return createPrefDirectorySync();
+        return createPreferenceDirectorySync();
       }
 
-      function createPrefDirectorySync() {
+      function createPreferenceDirectorySync() {
         fs.mkdirSync(preferenceFileDir, { recursive: true });
         return {};
       }
@@ -294,23 +297,28 @@ function __exports(config = {}) {
 
     fs.readFile(filePath, function (err, data) {
       if (err) {
-        return createPrefFile(callbackfn);
+        return createPreferenceFile(callbackfn);
       } else {
-        return callbackfn(null, JSON.parse(data.toString()));
+        try {
+          callbackfn(null, JSON.parse(data.toString()));
+        } catch (err) {
+          // try to delete corrupt json file
+          deleteFile_c(optionalFileName, (err) => callbackfn(err, {}));
+        }
       }
     });
 
-    function createPrefFile(callbackfn) {
+    function createPreferenceFile(callbackfn) {
       fs.open(filePath, "wx", function (err, fd) {
         if (err /* file not found or some other error occurred */) {
-          return createPrefDirectory(fd, callbackfn);
+          return createPreferenceDirectory(fd, callbackfn);
         } else {
-          fs.writeFile(fd, "{}", (err) => callbackfn(err, {}));
+          fs.writeFile(fd, "{}", { encoding: "utf-8" }, (err) => callbackfn(err, {}));
         }
       });
 
       // create file directory
-      function createPrefDirectory(fd, callbackfn) {
+      function createPreferenceDirectory(fd, callbackfn) {
         fs.mkdir(fd, { recursive: true }, function (err) {
           callbackfn(err, {});
           fd?.close();
@@ -323,11 +331,10 @@ function __exports(config = {}) {
   async function setPreferences(preferenceOb, optionalFileName) {
     await checkArgsP(preferenceOb, optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
-
     const preference = JSON.stringify(preferenceOb);
 
     try {
-      await fsp.writeFile(filePath, preference);
+      await fsp.writeFile(filePath, preference, "utf-8");
       return true;
     } catch (err) {
       return false;
@@ -341,20 +348,20 @@ function __exports(config = {}) {
     const preference = JSON.stringify(preferenceOb);
 
     try {
-      fs.writeFileSync(filePath, preference);
+      fs.writeFileSync(filePath, preference, "utf-8");
       return true;
     } catch (err) {
       return false;
     }
   }
-
+  
   // asynchronously writes to file, the JSON object specified by "preferenceOb"
   function setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn) {
     checkArgs(preferenceOb, optionalFileName);
     const filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(preferenceOb);
 
-    fs.writeFile(filePath, preference, (err) => callbackfn(err, err ? false : true));
+    fs.writeFile(filePath, preference, { encoding: "utf-8" }, (err) => callbackfn(err, err ? false : true));
   }
 
   /**
@@ -527,36 +534,34 @@ function __exports(config = {}) {
   function setStateSync(key, value, optionalFileName) {
     checkArgs(key, optionalFileName);
     let preferenceOb = getPreferencesSync(optionalFileName);
+
     preferenceOb[`${key}`] = `${value}`;
-    return setPreferencesSync(preferenceOb);
+    return setPreferencesSync(preferenceOb, optionalFileName);
   }
 
   /**
    *  Sets a value asynchronously
    *
-   * @param {string} key              The key in the preference in which it's value would be set
-   * @param {*} value            the value to be set and mapped to the key
-   * @param {string} optionalFileName An optional filename used to persist the settings. This can be left null
-   * @returns {Promise<boolean>}                 a Promise that resolves to a boolean; indicating if the operation was successful or not
+   * @param {string}             key              - the key in the preference in which it's value would be set
+   * @param {*}                  value            - the value to be set and mapped to the key
+   * @param {string}             optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @returns {Promise<boolean>}                    a Promise that resolves to a boolean; indicating if the operation was successful or not
    */
   async function setState(key, value, optionalFileName) {
     await checkArgsP(key, optionalFileName);
     let preferenceOb = await getPreferences(optionalFileName);
     preferenceOb[`${key}`] = `${value}`;
 
-    const isPreferenceSet = await setPreferences(preferenceOb, optionalFileName);
-
-    return isPreferenceSet;
+    return await setPreferences(preferenceOb, optionalFileName);
   }
 
   /**
    *  Sets a value asynchronously
    *
-   * @param {*} optionalFileName An optional filename used to persist the settings. This can be left null
-   * @param {*} key              The key in the preference in which it's value would be set
-   * @param {*} value            The value to be set and mapped to the key
-   * @param {*} callbackfn       Node-Js qualified callback with any error that occurred as the first argument and a boolean;
-   *                             indicating if the operation was successful or not
+   * @param {string}    optionalFileName  - an optional filename used to persist the settings. This can be left null
+   * @param {string}    key               - the key in the preference in which it's value would be set
+   * @param {*}         value             - the value to be set and mapped to the key
+   * @param {Function}  callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a boolean; indicating if the operation was successful or not
    */
   function setState_c(key, value, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);
@@ -574,9 +579,9 @@ function __exports(config = {}) {
   /**
    *  asynchronously sets the states of a user preference using a JSON object containing key-value pairs
    *
-   * @param     states            - a map with the key-value pair to be persisted
-   * @param {*} optionalFileName  - an optional filename used to persist the settings. This can be left null
-   * @returns {Promise<string[]>}   a Promise that resolves an Array; list of all the values that were persisted / set
+   * @param  {JSON}               states            - a map with the key-value pair to be persisted
+   * @param {string}              optionalFileName  - an optional filename used to persist the settings. This can be left null
+   * @returns {Promise<string[]>}                     a Promise that resolves an Array; list of all the values that were persisted / set
    */
   async function setStates(states, optionalFileName) {
     await checkArgsP(optionalFileName);
@@ -604,7 +609,7 @@ function __exports(config = {}) {
     let preferenceOb = getPreferencesSync(optionalFileName);
     let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
-    return setPreferencesSync(preferenceOb) ? inserted : [];
+    return setPreferencesSync(preferenceOb, optionalFileName) ? inserted : [];
   }
 
   /**
@@ -616,6 +621,7 @@ function __exports(config = {}) {
    */
   function setStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
+
     if (!states instanceof Object) {
       return callbackfn(new IllegalArgumentError("states must be a qualified JSON object"));
     }
@@ -676,7 +682,7 @@ function __exports(config = {}) {
       return true;
     }
 
-    return setPreferencesSync(preferenceOb);
+    return setPreferencesSync(preferenceOb, optionalFileName);
   }
 
   /**
@@ -743,13 +749,16 @@ function __exports(config = {}) {
 }
 
 /**
+ * an implementation of the API where options have to be set
+ *
  * @param {JSON}     config the configuration to be used in initialization
  * @returns {Function}        a function to be used in initialization
  */
 module.exports = __exports;
 
 /**
- * a default implementation, options wasn't set
+ * a default implementation of the API, options weren't set
+ *
  * @returns {JSON} the required APIs
  */
 module.exports.defaults = __exports();
