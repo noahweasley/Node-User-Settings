@@ -4,6 +4,8 @@
     "explorer.excludeGitIgnore": true,
     "cSpell.words": [
         "buymeacoffee",
+        "dosini",
         "noahweasley"
-    ]
+    ],
+    // "jest.autoRun": {}
 }
