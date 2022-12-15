@@ -1,4 +1,5 @@
 {
+    // "jest.autoRun": {},
     "workbench.colorTheme": "Community Material Theme Darker High Contrast",
     "git.ignoreLimitWarning": true,
     "explorer.excludeGitIgnore": true,
@@ -6,6 +7,5 @@
         "buymeacoffee",
         "dosini",
         "noahweasley"
-    ],
-    // "jest.autoRun": {}
+    ]
 }
