@@ -16,6 +16,4 @@ module.exports.checkArgsP = async function (...args) {
       throw new IllegalArgumentError(`${arg} must be a String`);
     }
   });
-
-  return args.length;
 };
