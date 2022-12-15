@@ -7,7 +7,7 @@
 ```dosini
 # replace values with a valid file path
 
-OPTIONAL_FILENAME="settings.json"
+OPTIONAL_FILENAME="a-proper-file-with-extension"
 NODE_USER_SETTINGS_DIRECTORY="directory/to/save/settings/file"
 NODE_USER_SETTINGS_FILE_PATH="filename/to/save/settings"
 NODE_USER_SETTINGS_OPTIONAL_FILE_PATH="filename/to/save/optional/settings"
@@ -19,4 +19,4 @@ NODE_USER_SETTINGS_OPTIONAL_FILE_PATH="filename/to/save/optional/settings"
 
 - Wait for a merge
 
-More features are coming up :rocket:
+More features are coming up soon :rocket:
