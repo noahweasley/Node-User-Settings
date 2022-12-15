@@ -1,8 +1,10 @@
 node_modules
 .env
 debug
+release-notes.txt
 # npm ignore
 .github
 .vscode
 test
 auto.bat
+/examples
