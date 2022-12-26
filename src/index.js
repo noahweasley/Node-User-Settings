@@ -25,7 +25,6 @@
 
 "use-strict";
 
-require("fs")
 // const fileLocker = require("proper-lockfile");
 const path = require("path");
 const fsp = require("fs/promises");
