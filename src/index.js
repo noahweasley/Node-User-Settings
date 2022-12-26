@@ -25,6 +25,7 @@
 
 "use-strict";
 
+require("fs")
 // const fileLocker = require("proper-lockfile");
 const path = require("path");
 const fsp = require("fs/promises");
@@ -126,7 +127,7 @@ function __exports(config = {}) {
    *
    * @param {JSON}     preferenceOb      - a JSON object to be serialized and persisted
    * @param {string}   optionalFileName  - an optional filename used to persist the settings. This can be left _null_
-   * @param {Function} callbackfn        - a Node-Js qualified callback with any IllegalArgumentError that occurred as the first argument and a boolean; if the file was successfully persisted
+   * @param {Function} callbackfn        - a Node-Js qualified callback with any IllegalArgumentError that occurred as the first argument and a boolean as the second argument, indicating if the file was successfully persisted
    */
   function serialize_c(preferenceOb, optionalFileName, callbackfn) {
     setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn);
@@ -168,7 +169,7 @@ function __exports(config = {}) {
    *
    * @param {string}   optionalFileName - an  optional filename used to persist the settings. This can be left null
    * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first
-   *                                      argument and a string; which is the data that was deserialized and retrieved
+   *                                      argument and a string as the second argument, representing the data that was deserialized and retrieved
    */
   function deserialize_c(optionalFileName, callbackfn) {
     getPreferencesWithCallback(optionalFileName, callbackfn);
@@ -213,7 +214,7 @@ function __exports(config = {}) {
    * Asynchronously deletes the preference file
    *
    * @param {string}   optionalFileName - an optional filename in which the corresponding file would be deleted. This can be left null
-   * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and a boolean; if the file was successfully deleted
+   * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the file was successfully deleted
    *
    */
   function deleteFile_c(optionalFileName, callbackfn) {
@@ -395,7 +396,7 @@ function __exports(config = {}) {
    *
    * @param {string}    key                 - the key in the preference in which it's value would be checked for it's existence
    * @param {string}    optionalFileName    - an optional filename used to do the check. This can be left null
-   * @param {Function}  callbackfn          - a Node-Js qualified callback with any error that occurred as the first argument and a boolean; indicating if the key exists in the persisted preference
+   * @param {Function}  callbackfn          - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the key exists in the persisted preference
    */
   function hasKey_c(key, optionalFileName, callbackfn) {
     checkArgs(key);
@@ -448,7 +449,7 @@ function __exports(config = {}) {
    * @param {string}   key               - the key in the preference in which it's value would be retrieved
    * @param {string}   optionalFileName  - an optional filename used to persist the settings. This can be left _null_
    * @param {*}        defaultValue      - the default value to be retrieved if that key has never been set
-   * @param {Function} callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a string; the value which was mapped to the key specified
+   * @param {Function} callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a string as the second argument, representing the value which was mapped to the key specified
    */
   function getState_c(key, defaultValue, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
@@ -506,7 +507,7 @@ function __exports(config = {}) {
    *
    * @param {string}   optionalFileName - optional filename used to persist the settings. This can be left null
    * @param {string[]} states           - an array of keys of which values would be retrieved
-   * @param {Function} callbackfn       - a qualified callback function with error as the first argument and the data as the second
+   * @param {Function} callbackfn       - a qualified callback function with error as the first argument and an array as the second argument, representing a list of all the values that were retrieved
    */
   function getStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
@@ -561,7 +562,7 @@ function __exports(config = {}) {
    * @param {string}    optionalFileName  - an optional filename used to persist the settings. This can be left null
    * @param {string}    key               - the key in the preference in which it's value would be set
    * @param {*}         value             - the value to be set and mapped to the key
-   * @param {Function}  callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a boolean; indicating if the operation was successful or not
+   * @param {Function}  callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the operation was successful or not
    */
   function setState_c(key, value, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);
@@ -617,7 +618,7 @@ function __exports(config = {}) {
    *
    * @param {JSON}     states           - a map with the key-value pair to be persisted
    * @param {string}   optionalFileName - an optional filename used to persist the settings. This can be left null
-   * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and an Array; a list of all the values that were persisted / set
+   * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and an array as the second argument, representing a list of all the values that were persisted / set
    */
   function setStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
@@ -690,7 +691,7 @@ function __exports(config = {}) {
    *
    * @param {string}    key              - the key in the preference in which it's value would be deleted
    * @param {string}    optionalFileName - an optional filename used to persist the settings. This can be left null
-   * @param {Function}  callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and a boolean; indicating if the key was successfully deleted
+   * @param {Function}  callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the key was successfully deleted
    */
   function deleteKey_c(key, optionalFileName, callbackfn) {
     checkArgs(key, optionalFileName);

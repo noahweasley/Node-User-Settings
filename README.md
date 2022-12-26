@@ -1,6 +1,6 @@
 # Node User Settings
 
-![Licence](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases)  ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)  ![Bundle size](https://img.shields.io/bundlephobia/min/node-user-settings?color=red&label=bundle%20size&logo=red&logoColor=white)
+![Licence](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings) ![Bundle size](https://img.shields.io/bundlephobia/min/node-user-settings?color=red&label=bundle%20size&logo=red&logoColor=white)
 
 A universal but simple node library to implement user settings, but originally built to work with Electron.js.
 
@@ -10,7 +10,7 @@ A universal but simple node library to implement user settings, but originally b
 
 All of them are available for use !
 
-_Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you like this little package and are using it. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
+_Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you like this little package and you are using it any of your projects. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
 
 ## Installation and API Usage
 
@@ -513,7 +513,7 @@ An optional filename used to persist the settings. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and a String; the value which was mapped to the key specified
+A Node-Js qualified callback with any error that occurred as the first argument and a String as the second argument, representing the value which was mapped to the key specified
 
 **Example**
 
@@ -554,7 +554,7 @@ An optional filename used to persist the settings. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; indicating if the operation was successful or not
+A Node-Js qualified callback with any error that occurred as the first argument and a Boolean as the second argument, indicating if the operation was successful or not
 
 **Example**
 
@@ -589,7 +589,7 @@ An optional filename used to persist the settings. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and an Array; a list of all the values that were persisted / set
+A Node-Js qualified callback with any error that occurred as the first argument and an Array as the second argument, representing a list of all the values that were persisted / set
 
 **Example**
 
@@ -631,7 +631,7 @@ An optional filename used to persist the settings. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and an Array; list of all the values that were retrieved
+A Node-Js qualified callback with any error that occurred as the first argument and an Array as the second argument, representing list of all the values that were retrieved
 
 **Example**
 
@@ -668,7 +668,7 @@ An optional filename used to do the check. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; indicating if the key exists in the persisted preference
+A Node-Js qualified callback with any error that occurred as the first argument and a Boolean as the second argument, indicating if the key exists in the persisted preference
 
 **Example**
 
@@ -703,7 +703,7 @@ An optional filename used to persist the settings. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; indicating if the key was successfully deleted
+A Node-Js qualified callback with any error that occurred as the first argument and a Boolean as the second argument, indicating if the key was successfully deleted
 
 **Example**
 
@@ -732,7 +732,7 @@ An optional filename in which the corresponding file would be deleted. This can 
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; if the file was successfully deleted
+A Node-Js qualified callback with any error that occurred as the first argument and a Boolean as the second argument, indicating if the file was successfully deleted
 
 **Example**
 
@@ -767,7 +767,7 @@ An optional filename used to persist the settings. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and a Boolean; if the file was successfully persisted
+A Node-Js qualified callback with any error that occurred as the first argument and a Boolean as the second argument, indicating if the file was successfully persisted
 
 **Example**
 
@@ -802,7 +802,7 @@ An optional filename used to persist the settings. This can be left _null_
 
 #### Type: `Function`
 
-A Node-Js qualified callback with any error that occurred as the first argument and a String; which is the data that was deserialized and retrieved
+A Node-Js qualified callback with any error that occurred as the first argument and a String as the second argument, representing the data that was deserialized and retrieved
 
 **Example**
 
