@@ -237,7 +237,7 @@ function __exports(config = {}) {
     async function createPreferenceFile() {
       let filehandle;
       try {
-        filehandle = await fsp.open(filePath, "wx");
+        filehandle = await fsp.open(filePath, "wx+");
         await fsp.writeFile(filehandle, "{}", "utf-8");
       } catch (err) {
         if (err.code === "EEXIST") return {};
@@ -309,7 +309,7 @@ function __exports(config = {}) {
     });
 
     function createPreferenceFile(callbackfn) {
-      fs.open(filePath, "wx", function (err, fd) {
+      fs.open(filePath, "wx+", function (err, fd) {
         if (err /* file not found or some other error occurred */) {
           return createPreferenceDirectory(fd, callbackfn);
         } else {
@@ -319,7 +319,7 @@ function __exports(config = {}) {
 
       // create file directory
       function createPreferenceDirectory(fd, callbackfn) {
-        fs.mkdir(fd, { recursive: true }, function (err) {
+        fs.mkdir(filePath, { recursive: true }, function (err) {
           callbackfn(err, {});
           fd?.close();
         });
