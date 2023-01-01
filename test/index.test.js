@@ -1,5 +1,5 @@
-const { describe, expect, test, afterEach, beforeEach , fit} = require("@jest/globals");
-const mockData = require("./mock-data.json");
+const { describe, expect, test, afterEach } = require("@jest/globals");
+const { pumpPreference, getTempFileDirectoryFromPath, pumpPreferenceSync, pumpPreference_c } = require("./utils");
 require("dotenv").config();
 const path = require("path");
 
@@ -12,11 +12,6 @@ const settings = require("../src/index")({
 afterEach(async () => {
   await settings.deleteFile();
   await settings.deleteFile(process.env.OPTIONAL_FILENAME);
-});
-
-beforeEach(async () => {
-  await settings.serialize(mockData);
-  await settings.serialize(mockData, process.env.OPTIONAL_FILENAME);
 });
 
 describe("General settings api tests", () => {
@@ -43,6 +38,8 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously gets a value without optional filename ( returning a promise )", async () => {
+    await pumpPreference(settings.getDefaultPreferenceFilePath(), { moduleName: "node-user-settings" });
+
     let value = await settings.getState("moduleName");
     expect(value).toBe("node-user-settings");
   });
@@ -53,7 +50,11 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously gets a value with optional filename ( returning a promise )", async () => {
-    let value = await settings.getState("moduleName", process.env.OPTIONAL_FILENAME);
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    await pumpPreference(tmpPath, { moduleName: "node-user-settings" });
+
+    let value = await settings.getState("moduleName", "default", process.env.OPTIONAL_FILENAME);
     expect(value).toBe("node-user-settings");
   });
 
@@ -67,6 +68,12 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously get multiple values without optional filename ( returning a promise )", async () => {
+    await pumpPreference(settings.getDefaultPreferenceFilePath(), {
+      moduleName: "node-user-settings",
+      version: "1.0.0",
+      author: "noahweasley"
+    });
+
     let values = await settings.getStates(["moduleName", "version", "author"]);
     expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
@@ -84,6 +91,14 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously get multiple values with optional filename ( returning a promise )", async () => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    await pumpPreference(tmpPath, {
+      moduleName: "node-user-settings",
+      version: "1.0.0",
+      author: "noahweasley"
+    });
+
     let values = await settings.getStates(["moduleName", "version", "author"], process.env.OPTIONAL_FILENAME);
     expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
@@ -99,21 +114,33 @@ describe("Promise-based settings api tests", () => {
   });
 
   test("asynchronously check if a single entry exists without optional filename ( returning a promise )", async () => {
+    await pumpPreference(settings.getDefaultPreferenceFilePath(), { moduleName: "node-user-settings" });
+
     let hasKey = await settings.hasKey("moduleName");
     expect(hasKey).toBe(true);
   });
 
   test("asynchronously check if a single entry exists with optional filename  ( returning a promise )", async () => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+    await pumpPreference(tmpPath, { moduleName: "node-user-settings" });
+
     let hasKey = await settings.hasKey("moduleName", process.env.OPTIONAL_FILENAME);
     expect(hasKey).toBe(true);
   });
 
   test("asynchronously deletes preference file without optional filename ( returning a promise )", async () => {
+    // data is empty because the preference just needs to exist
+    await pumpPreference(settings.getDefaultPreferenceFilePath(), {});
+
     let isDeleted = await settings.deleteFile();
     expect(isDeleted).toBe(true);
   });
 
   test("asynchronously deletes preference file without optional filename ( returning a promise )", async () => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+    // data is empty because the preference just needs to exist
+    await pumpPreference(tmpPath, {});
+
     let isDeleted = await settings.deleteFile(process.env.OPTIONAL_FILENAME);
     expect(isDeleted).toBe(true);
   });
@@ -126,6 +153,8 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously gets a value without optional filename", () => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), { moduleName: "node-user-settings" });
+
     let value = settings.getStateSync("moduleName");
     expect(value).toBe("node-user-settings");
   });
@@ -136,7 +165,11 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously gets a value with optional filename", () => {
-    let value = settings.getStateSync("moduleName", process.env.OPTIONAL_FILENAME);
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, { moduleName: "node-user-settings" });
+
+    let value = settings.getStateSync("moduleName", "default", process.env.OPTIONAL_FILENAME);
     expect(value).toBe("node-user-settings");
   });
 
@@ -150,6 +183,12 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously get multiple values without optional filename", () => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), {
+      moduleName: "node-user-settings",
+      version: "1.0.0",
+      author: "noahweasley"
+    });
+
     let values = settings.getStatesSync(["moduleName", "version", "author"]);
     expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
@@ -167,6 +206,14 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously get multiple values with optional filename", () => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, {
+      moduleName: "node-user-settings",
+      version: "1.0.0",
+      author: "noahweasley"
+    });
+
     let values = settings.getStatesSync(["moduleName", "version", "author"], process.env.OPTIONAL_FILENAME);
     expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
   });
@@ -182,21 +229,33 @@ describe("Synchronous-based settings api tests", () => {
   });
 
   test("synchronously check if a single entry exists without optional filename", () => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), { version: "1.0.0" });
+
     let hasKey = settings.hasKeySync("version");
     expect(hasKey).toBe(true);
   });
 
   test("synchronously check if a single entry exists with optional filename", () => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, { version: "1.0.0" });
+
     let hasKey = settings.hasKeySync("version", process.env.OPTIONAL_FILENAME);
     expect(hasKey).toBe(true);
   });
 
   test("synchronously deletes preference file without optional filename", () => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), {});
+
     let isDeleted = settings.deleteFileSync();
     expect(isDeleted).toBe(true);
   });
 
   test("synchronously deletes preference file with optional filename", () => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, {});
+
     let isDeleted = settings.deleteFileSync(process.env.OPTIONAL_FILENAME);
     expect(isDeleted).toBe(true);
   });
@@ -204,6 +263,8 @@ describe("Synchronous-based settings api tests", () => {
 
 describe("Callback-based settings api tests", () => {
   test("asynchronously check if a single entry exists without optional filename", (done) => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), { version: "1.0.0" });
+
     settings.hasKey_c("version", null, (err, hasKey) => {
       expect(err).toBe(null);
       expect(hasKey).toBe(true);
@@ -212,6 +273,10 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously check if a single entry exists with optional filename", (done) => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, { version: "1.0.0" });
+
     settings.hasKey_c("version", process.env.OPTIONAL_FILENAME, (err, hasKey) => {
       expect(err).toBe(null);
       expect(hasKey).toBe(true);
@@ -220,6 +285,8 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously gets a value, using callbacks without optional filename", (done) => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), { moduleName: "node-user-settings" });
+    
     settings.getState_c("moduleName", null, null, (err, value) => {
       expect(err).toBe(null);
       expect(value).toBe("node-user-settings");
@@ -228,6 +295,10 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously gets a value, using callbacks with optional filename", (done) => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, { moduleName: "node-user-settings" });
+
     settings.getState_c("moduleName", null, process.env.OPTIONAL_FILENAME, (err, value) => {
       expect(err).toBe(null);
       expect(value).toBe("node-user-settings");
@@ -252,6 +323,12 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously gets multiple values without optional filename, using callback", (done) => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), {
+      moduleName: "node-user-settings",
+      version: "1.0.0",
+      author: "noahweasley"
+    });
+
     settings.getStates_c(["moduleName", "version", "author"], null, (err, values) => {
       expect(err).toBe(null);
       expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
@@ -260,6 +337,10 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously gets multiple values with optional filename, using callback", (done) => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, { moduleName: "node-user-settings", version: "1.0.0", author: "noahweasley" });
+
     settings.getStates_c(["moduleName", "version", "author"], process.env.OPTIONAL_FILENAME, (err, values) => {
       expect(err).toBe(null);
       expect(values).toEqual(["node-user-settings", "1.0.0", "noahweasley"]);
@@ -296,6 +377,8 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously delete preference file without optional filename, using callback", (done) => {
+    pumpPreferenceSync(settings.getDefaultPreferenceFilePath(), {});
+
     settings.deleteFile_c(null, (err, isDeleted) => {
       expect(err).toBe(null);
       expect(isDeleted).toBe(true);
@@ -304,6 +387,10 @@ describe("Callback-based settings api tests", () => {
   });
 
   test("asynchronously delete preference file with optional filename, using callback", (done) => {
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, {});
+
     settings.deleteFile_c(process.env.OPTIONAL_FILENAME, (err, isDeleted) => {
       expect(err).toBe(null);
       expect(isDeleted).toBe(true);
@@ -316,9 +403,13 @@ describe("Anonymous API tests", () => {
   test("overrides preference file path when optional file path is specified", () => {
     // @TODO fix bug: path gotten from dotenv contains extra slashes, even when it doesn't
     const normalizedPath = path.normalize(process.env.NODE_USER_SETTINGS_OPTIONAL_FILE_PATH);
-    
+
     const settings = require("../src/index").defaults;
     settings.setDefaultPreferenceFilePath(process.env.NODE_USER_SETTINGS_FILE_PATH);
+
+    let tmpPath = getTempFileDirectoryFromPath(settings.getDefaultPreferenceFilePath(), process.env.OPTIONAL_FILENAME);
+
+    pumpPreferenceSync(tmpPath, { moduleName: "node-user-settings" });
 
     let hasKey = settings.hasKeySync("moduleName", process.env.OPTIONAL_FILENAME);
     let newFilePathAfterOverride = settings.getTempPreferenceOptionalFilePath();

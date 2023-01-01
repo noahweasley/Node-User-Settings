@@ -1,18 +1,20 @@
 # Node User Settings
 
-![Licence](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings) ![Bundle size](https://img.shields.io/bundlephobia/min/node-user-settings?color=red&label=bundle%20size&logo=red&logoColor=white)
+![Licence](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)
 
 A universal but simple node library to implement user settings, but originally built to work with Electron.js.
 
-- Synchronous functions
-- Asynchronous functions
-- Callback-based functions
+## Features
 
-All of them are available for use !
+---
+- Easy to setup and use
+- Synchronous functions available
+- Asynchronous functions available
+- Callback-based functions available
 
 _Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you like this little package and you are using it any of your projects. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
 
-## Installation and API Usage
+## Getting Started
 
 ---
 
@@ -24,7 +26,7 @@ _Hey ! *Node User Settings* needs stars on the main repository on Github, please
 npm i node-user-settings --save
 ```
 
-## API Usage
+### API Usage
 
 ---
 
