@@ -78,7 +78,7 @@ const settings = require("node-user-settings").defaults;
 
 ### Keys
 
-#### `preferenceFileName` (deprecated)
+#### `preferenceFileName`
 
 The filename (with extension) used to persist preference
 
