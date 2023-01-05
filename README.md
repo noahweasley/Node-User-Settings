@@ -4,21 +4,26 @@
 
 A universal but simple node library to implement user settings, but originally built to work with Electron.js.
 
-## Features
+## Features 🌺
 
 ---
+
 - Easy to setup and use
 - Synchronous functions available
 - Asynchronous functions available
 - Callback-based functions available
 
-_Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you like this little package and you are using it any of your projects. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
-
-## Getting Started
+## Notice 👀
 
 ---
 
-### Installation
+_Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you like this little package and you are using it any of your projects. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
+
+## Getting Started ☕
+
+---
+
+### Installation 💻
 
 ---
 
@@ -26,11 +31,11 @@ _Hey ! *Node User Settings* needs stars on the main repository on Github, please
 npm i node-user-settings --save
 ```
 
-### API Usage
+### API Usage 📝
 
 ---
 
-### Please Note
+### Please Note 🚨
 
 - For now, callback-based methods naming are weird, I know. I am going to fix it in a major release; in the future.
 
@@ -46,7 +51,7 @@ npm i node-user-settings --save
 
 - It is recommended that you only initialize the API once and then pass the initialized instance around using **Dependency Injection**. Even though you don't do this, it's still possible that the API would work as you want because Node JS automatically caches a module after **requiring** them. But again, I wouldn't recommend you do that!
 
-## Setup and Initialization
+## Setup and Initialization 🛠️
 
 ---
 
@@ -101,7 +106,7 @@ const settings = require("node-user-settings")({
 // the *Settings* variable in which the module was imported and stored, is what would be used to call the following methods listed
 ```
 
-For Electron Users
+For Electron Users 💡
 
 ```javascript
 // preferenceFileName is optional, it defaults to a Settings.json file
@@ -120,7 +125,7 @@ const settings = require("node-user-settings")({
 // the *Settings* variable in which the module was imported and stored, is what would be used to call the following methods listed
 ```
 
-## General Utility Method
+## General Utility Method 💡
 
 ---
 
@@ -184,7 +189,7 @@ const path = settings.setDefaultPreferenceFilePath("path/to/save/preference");
 console.log(path);
 ```
 
-## Promise-based Method
+## Promise-based Method 💡
 
 ---
 
@@ -481,7 +486,7 @@ const data = await settings.deserialize(optionalFileName);
 console.log(data);
 ```
 
-## Callback-based Method
+## Callback-based Method 💡
 
 ---
 
@@ -815,7 +820,7 @@ settings.deserialize_c(optionalFileName, function (err, data) {
 });
 ```
 
-## Synchronous Method
+## Synchronous Method 💡
 
 ---
 
@@ -1110,7 +1115,7 @@ const data = settings.deserializeSync(optionalFileName);
 console.log(data);
 ```
 
-## License
+## License 📒
 
 ---
 
