@@ -35,8 +35,6 @@ const { InitializationError, IllegalStateError, IllegalArgumentError, UnModifiab
 
 function __exports(config = {}) {
   let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
-  // preferenceFileName is deprecated to enable custom file extensions
-  preferenceFileName && console.warn("preferenceFileName option is deprecated, please refer to the docs");
 
   let defaultPreferenceFilePath, optionalPreferenceFilePath;
 
@@ -45,6 +43,8 @@ function __exports(config = {}) {
       preferenceFileDir,
       preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || Constants.FILE_EXT}`
     );
+  } else if (!preferenceFileDir && preferenceFileName) {
+    setDefaultPreferenceFilePath(preferenceFileName);
   }
 
   function getPreferenceFilePath(optionalFileName) {
@@ -354,7 +354,7 @@ function __exports(config = {}) {
       return false;
     }
   }
-  
+
   // asynchronously writes to file, the JSON object specified by "preferenceOb"
   function setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn) {
     checkArgs(preferenceOb, optionalFileName);

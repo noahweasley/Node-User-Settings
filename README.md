@@ -8,6 +8,7 @@ A universal but simple node library to implement user settings, but originally b
 
 ---
 
+- Code in your own style 
 - Easy to setup and use
 - Synchronous functions available
 - Asynchronous functions available
@@ -45,7 +46,9 @@ npm i node-user-settings --save
 
 - Adding a sync as suffix to the promise-based functions, provides you with it's synchronous alternatives.
 
-- `preferenceFileName` is now deprecated as of v1.1.0 and you should use, `fileName` and `fileExt` instead to set the file name to be used to persist settings. This small addition would be used in the future and might not be useful for now. But it is highly recommended to stop using `preferenceFileName` for future versions, because it would be removed soon.
+- `preferenceFileName` is no longer deprecated as of v1.5.0. Use `preferenceDir`, `fileName` and `fileExt` to set the file name to be used to persist settings, if you want to split the preference directory, filename and extension.
+
+- Specifying only `preferenceFileName` in `options` is the same as calling `settings.setDefaultPreferenceFilePath()`
 
 - Leaving `fileExt` config option blank but setting a `fileName`, results in a file with the `.json` file extension.
 
