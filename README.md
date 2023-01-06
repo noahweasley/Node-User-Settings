@@ -1,6 +1,6 @@
 # Node User Settings
 
-![Licence](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)
+![License](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)
 
 A universal but simple node library to implement user settings, but originally built to work with Electron.js.
 
@@ -8,7 +8,7 @@ A universal but simple node library to implement user settings, but originally b
 
 ---
 
-- Code in your own style 
+- Code in your own style
 - Easy to setup and use
 - Synchronous functions available
 - Asynchronous functions available
@@ -96,6 +96,12 @@ The file extension of the file used to persist preference
 
 **Example**
 
+For Non-Electron JS users 💡
+
+---
+
+#### Splitting paths into different units
+
 ```javascript
 // preferenceFileName is optional, it defaults to a Settings.json file
 
@@ -106,10 +112,24 @@ const settings = require("node-user-settings")({
   fileExt: "json"
 });
 
-// the *Settings* variable in which the module was imported and stored, is what would be used to call the following methods listed
 ```
 
-For Electron Users 💡
+#### Merging paths into a single unit
+
+```javascript
+// using only preferenceFileName, it is required for you to input the full path to the file
+
+const settings = require("node-user-settings")({
+  preferenceFileName: "path/to/save/preference/Settings.json"
+});
+
+```
+
+For Electron JS Users 💡
+
+---
+
+#### Splitting paths into different units
 
 ```javascript
 // preferenceFileName is optional, it defaults to a Settings.json file
@@ -120,13 +140,29 @@ const { join } = require("path");
 const settings = require("node-user-settings")({
   /* this is the recommended path to persist preference */
   preferenceFileDir: join(app.getPath("userData"), "User", "Preferences"),
+  /* preferenceFileName is optional, it defaults to a Settings.json file */
   preferenceFileName: "Settings.json",
   fileName: "Settings",
   fileExt: "json"
 });
 
-// the *Settings* variable in which the module was imported and stored, is what would be used to call the following methods listed
 ```
+
+#### Merging paths into a single unit
+
+```javascript
+const { app } = require("electron");
+const { join } = require("path");
+
+// using only preferenceFileName, it is required for you to input the full path to the file
+
+const settings = require("node-user-settings")({
+  /* this is the recommended path to persist preference */
+  preferenceFileName: join(app.getPath("userData"), "User", "Preferences", "Settings.json")
+});
+```
+
+The _settings_ variable where module was imported and stored, is what would be used to call the following methods listed below
 
 ## General Utility Method 💡
 
