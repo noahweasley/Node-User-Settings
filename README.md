@@ -6,8 +6,6 @@ A universal but simple node library to implement user settings, but originally b
 
 ## Features 🌺
 
----
-
 - Code in your own style
 - Easy to setup and use
 - Synchronous functions available
@@ -16,13 +14,9 @@ A universal but simple node library to implement user settings, but originally b
 
 ## Notice 👀
 
----
-
 _Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you are using this library in your project and you like it. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
 
 ## Getting Started ☕
-
----
 
 ### Installation 💻
 
@@ -55,8 +49,6 @@ npm i node-user-settings --save
 - It is recommended that you only initialize the API once and then pass the initialized instance around using **Dependency Injection**. Even though you don't do this, it's still possible that the API would work as you want because Node JS automatically caches a module after **requiring** them. But again, I wouldn't recommend you do that!
 
 ## Setup and Initialization 🛠️
-
----
 
 Initialization using exported method
 
@@ -166,8 +158,6 @@ The _settings_ variable where module was imported and stored, is what would be u
 
 ## General Utility Method 💡
 
----
-
 ### ` getDefaultPreferenceFilePath()`
 
 Gets the default save path to the preference
@@ -229,8 +219,6 @@ console.log(path);
 ```
 
 ## Promise-based Method 💡
-
----
 
 ### `getState(key, defaultValue, optionalFileName)`
 
@@ -526,8 +514,6 @@ console.log(data);
 ```
 
 ## Callback-based Method 💡
-
----
 
 ### `getState_c(key, defaultValue, optionalFileName, callbackfn)`
 
@@ -861,8 +847,6 @@ settings.deserialize_c(optionalFileName, function (err, data) {
 
 ## Synchronous Method 💡
 
----
-
 ### `getStateSync(key, defaultValue, optionalFileName)`
 
 Gets a value synchronously
@@ -1155,7 +1139,5 @@ console.log(data);
 ```
 
 ## License 📒
-
----
 
 Node User Settings is licensed to everyone under the MIT License
