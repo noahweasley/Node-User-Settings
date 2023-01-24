@@ -510,8 +510,7 @@ function __exports(config = {}) {
    */
   function getStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
-    if (!states instanceof Array)
-      return callbackfn(new IllegalArgumentError("states must be a qualified Array object"));
+    if (!states instanceof Array) return callbackfn(new IllegalArgumentError("states must be a qualified Array object"));
 
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
