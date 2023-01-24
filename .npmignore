@@ -9,3 +9,6 @@ release-notes.txt
 test
 auto.bat
 /examples
+/cspell.json
+/.prettierrc.json
+/.editorconfig
