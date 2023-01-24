@@ -26,7 +26,13 @@ module.exports.pumpPreferenceSync = function (preferenceFilePath, statesMap) {
   let preferenceOb = {};
   let inserted = Object.keys(statesMap).map((key) => (preferenceOb[`${key}`] = `${statesMap[`${key}`]}`));
 
-  fs.writeFileSync(preferenceFilePath, JSON.stringify(preferenceOb), { encoding: "utf-8" });
+  try {
+    fs.writeFileSync(preferenceFilePath, JSON.stringify(preferenceOb), { encoding: "utf-8" });
+  } catch (err) {
+    this.deleteSettingsSync(preferenceFilePath);
+    this.pumpPreferenceSync(preferenceFilePath, statesMap);
+  }
+
   return inserted;
 };
 
@@ -44,7 +50,10 @@ module.exports.pumpPreference = async function (preferenceFilePath, statesMap) {
   let filehandle;
   try {
     filehandle = await fsp.open(preferenceFilePath, "wx+");
-    await fsp.writeFile(preferenceFilePath, JSON.stringify(preferenceOb), { encoding: "utf-8" });
+    await fsp.writeFile(preferenceFilePath, JSON.stringify(preferenceOb), { encoding: "utf-8", mode: 755 });
+  } catch (err) {
+    await this.deleteSettings(preferenceFilePath);
+    this.pumpPreference(preferenceFilePath, statesMap);
   } finally {
     filehandle?.close();
   }

@@ -1,5 +1,5 @@
 const { describe, expect, test, afterEach } = require("@jest/globals");
-const { pumpPreference, getTempFileDirectoryFromPath, pumpPreferenceSync, pumpPreference_c } = require("./utils");
+const { pumpPreference, getTempFileDirectoryFromPath, pumpPreferenceSync, deleteSettings} = require("./utils");
 require("dotenv").config();
 const path = require("path");
 
@@ -10,8 +10,8 @@ const settings = require("../src/index")({
 });
 
 afterEach(async () => {
-  await settings.deleteFile();
-  await settings.deleteFile(process.env.OPTIONAL_FILENAME);
+  await deleteSettings(settings.getDefaultPreferenceFilePath());
+  await deleteSettings(process.env.OPTIONAL_FILENAME);
 });
 
 describe("General settings api tests", () => {

@@ -12,10 +12,6 @@ A universal but simple node library to implement user settings, but originally b
 - Asynchronous functions available
 - Callback-based functions available
 
-## Notice 👀
-
-_Hey ! *Node User Settings* needs stars on the main repository on Github, please star the project [repository](https://github.com/noahweasley/Node-User-Settings.git), if you are using this library in your project and you like it. Also don't forget to follow me [Noah](https://github.com/noahweasley). Thank you_
-
 ## Getting Started ☕
 
 ### Installation 💻
@@ -103,7 +99,6 @@ const settings = require("node-user-settings")({
   fileName: "Settings",
   fileExt: "json"
 });
-
 ```
 
 #### Merging paths into a single unit
@@ -114,7 +109,6 @@ const settings = require("node-user-settings")({
 const settings = require("node-user-settings")({
   preferenceFileName: "path/to/save/preference/Settings.json"
 });
-
 ```
 
 For Electron JS Users 💡
@@ -137,7 +131,6 @@ const settings = require("node-user-settings")({
   fileName: "Settings",
   fileExt: "json"
 });
-
 ```
 
 #### Merging paths into a single unit
