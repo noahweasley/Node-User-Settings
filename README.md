@@ -2,7 +2,7 @@
 
 ![License](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)
 
-A universal but simple node library to implement user settings, but originally built to work with Electron.js.
+> A universal but simple node library to implement user settings, built to work with Electron.js without any configurations
 
 ## Features 🌺
 
@@ -49,7 +49,7 @@ npm i node-user-settings --save
 Initialization using exported method
 
 ```javascript
-const settings = require("node-user-settings)([options]);
+const settings = require("node-user-settings")([options]);
 ```
 
 In case you don't want to initialize `options` using exported method, initialize it this way
@@ -94,6 +94,7 @@ For Non-Electron JS users 💡
 // preferenceFileName is optional, it defaults to a Settings.json file
 
 const settings = require("node-user-settings")({
+  useElectronStorage: false,
   preferenceFileDir: "path/to/save/preference",
   preferenceFileName: "Settings.json",
   fileName: "Settings",
@@ -107,6 +108,7 @@ const settings = require("node-user-settings")({
 // using only preferenceFileName, it is required for you to input the full path to the file
 
 const settings = require("node-user-settings")({
+  useElectronStorage: false,
   preferenceFileName: "path/to/save/preference/Settings.json"
 });
 ```
@@ -124,6 +126,7 @@ const { app } = require("electron");
 const { join } = require("path");
 
 const settings = require("node-user-settings")({
+  useElectronStorage: false,
   /* this is the recommended path to persist preference */
   preferenceFileDir: join(app.getPath("userData"), "User", "Preferences"),
   /* preferenceFileName is optional, it defaults to a Settings.json file */

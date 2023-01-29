@@ -25,26 +25,36 @@
 
 "use-strict";
 
-// const fileLocker = require("proper-lockfile");
 const path = require("path");
 const fsp = require("fs/promises");
 const fs = require("fs");
 const Constants = require("./pref-constants");
 const { checkArgs, checkArgsP } = require("./util");
+
 const { InitializationError, IllegalStateError, IllegalArgumentError, UnModifiableStateError } = require("./error");
 
 function __exports(config = {}) {
-  let { preferenceFileDir, preferenceFileName, fileName, fileExt } = config;
+  let { preferenceFileDir, preferenceFileName, fileName, fileExt, useElectronStorage = true } = config;
 
   let defaultPreferenceFilePath, optionalPreferenceFilePath;
 
-  if ((preferenceFileDir && preferenceFileName) || (preferenceFileDir && fileName && fileExt)) {
-    defaultPreferenceFilePath = path.join(
-      preferenceFileDir,
-      preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || Constants.FILE_EXT}`
-    );
-  } else if (!preferenceFileDir && preferenceFileName) {
-    setDefaultPreferenceFilePath(preferenceFileName);
+  // still provide backward compatibility for electron applications still initializing the storage file path
+
+  if (useElectronStorage) {
+    const { app } = require("electron");
+    // this is the recommended path to persist preference on all electron applications
+    let directory = app.getPath("userData");
+    let filename = fileName || path.join("User", "Preferences", "Settings.json");
+    setDefaultPreferenceFilePath(path.join(directory, filename));
+  } else {
+    if ((preferenceFileDir && preferenceFileName) || (preferenceFileDir && fileName && fileExt)) {
+      defaultPreferenceFilePath = path.join(
+        preferenceFileDir,
+        preferenceFileName ? preferenceFileName : `${fileName}.${fileExt || Constants.FILE_EXT}`
+      );
+    } else if (!preferenceFileDir && preferenceFileName) {
+      setDefaultPreferenceFilePath(preferenceFileName);
+    }
   }
 
   function getPreferenceFilePath(optionalFileName) {
@@ -59,6 +69,25 @@ function __exports(config = {}) {
     } else {
       return path.normalize(defaultPreferenceFilePath);
     }
+  }
+
+  /**
+   * Sets the boolean to indicate usage of the default Electron application preferred settings location
+   *
+   * @param {boolean} value true to enable storage in the default electron storage folder
+   * @throws `Error`        if `value` is set to true but not using in an Electron application
+   */
+  function setUseElectronStorage(value) {
+    useElectronStorage = value;
+  }
+
+  /**
+   * Defaults to true to enable all electron applications store preferences at the default preferred location
+   *
+   * @returns {boolean} true if `useElectronStorage` option or `setUseElectronStorage()` was explicitly set
+   */
+  function isUsingElectronStorage() {
+    return useElectronStorage;
   }
 
   /**
