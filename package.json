@@ -1,7 +1,7 @@
 {
   "name": "node-user-settings",
   "version": "2.0.0",
-  "description": "A universal but simple node library to implement user settings, built to work with Electron.js without any configurations",
+  "description": " A universal but simple node library to implement user settings, built to work with Electron.js with little or no configurations at all",
   "main": "./src/index.js",
   "type": "commonjs",
   "scripts": {

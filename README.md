@@ -2,10 +2,12 @@
 
 ![License](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)
 
-> A universal but simple node library to implement user settings, built to work with Electron.js without any configurations
+> A universal but simple node library to implement user settings, built to work with Electron.js with little or no configurations at all
 
 ## Features 🌺
 
+- Universal, works for all Node JS applications
+- Little or no configurations with Electron JS
 - Code in your own style
 - Easy to setup and use
 - Synchronous functions available
