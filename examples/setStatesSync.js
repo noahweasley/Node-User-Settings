@@ -2,6 +2,8 @@
 
 const settings = require("../src/index").defaults;
 
+// disable electron storage path else exception is thrown
+settings.setUseElectronStorage(false);
 settings.setDefaultPreferenceFilePath("./examples/settings.json");
 
 let value1 = settings.setStatesSync({ name: "Noah", version: "1.0.0" });

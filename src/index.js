@@ -34,18 +34,19 @@ const { checkArgs, checkArgsP } = require("./util");
 const { InitializationError, IllegalStateError, IllegalArgumentError, UnModifiableStateError } = require("./error");
 
 function __exports(config = {}) {
-  let { preferenceFileDir, preferenceFileName, fileName, fileExt, useElectronStorage = true } = config;
+  let { preferenceFileDir, preferenceFileName, fileName, fileExt, electronFilePath, useElectronStorage = true } = config;
 
+  let electronStorageErrorCaught = false;
   let defaultPreferenceFilePath, optionalPreferenceFilePath;
 
   // still provide backward compatibility for electron applications still initializing the storage file path
 
   if (useElectronStorage) {
-    const { app } = require("electron");
-    // this is the recommended path to persist preference on all electron applications
-    let directory = app.getPath("userData");
-    let filename = fileName || path.join("User", "Preferences", "Settings.json");
-    setDefaultPreferenceFilePath(path.join(directory, filename));
+    try {
+      initializeElectronStorage();
+    } catch (err) {
+      electronStorageErrorCaught = true;
+    }
   } else {
     if ((preferenceFileDir && preferenceFileName) || (preferenceFileDir && fileName && fileExt)) {
       defaultPreferenceFilePath = path.join(
@@ -57,9 +58,23 @@ function __exports(config = {}) {
     }
   }
 
+  function initializeElectronStorage() {
+    const { app } = require("electron");
+    let directory = app.getPath("userData");
+    let filePath = electronFilePath || path.join("User", "Preferences", "Settings.json");
+
+    setDefaultPreferenceFilePath(path.join(directory, filePath));
+  }
+
+  //---------------------------------//
+  //           Main APIS             //
+  //---------------------------------//
+
   function getPreferenceFilePath(optionalFileName) {
     // throw error if not initialized
-    if (!defaultPreferenceFilePath) {
+    if (electronStorageErrorCaught) {
+      throw new IllegalStateError("Electron storage is used by default, disable this if not running in an Electron app");
+    } else if (!defaultPreferenceFilePath) {
       throw new InitializationError("You failed to initialize the preference API, no proper file path was found");
     }
 
@@ -72,22 +87,48 @@ function __exports(config = {}) {
   }
 
   /**
-   * Sets the boolean to indicate usage of the default Electron application preferred settings location
+   * Sets the flag indicating usage of the default Electron application preferred settings location
    *
-   * @param {boolean} value true to enable storage in the default electron storage folder
-   * @throws `Error`        if `value` is set to true but not using in an Electron application
+   * @param {boolean} value flag to enable storage in the default electron storage folder
    */
   function setUseElectronStorage(value) {
     useElectronStorage = value;
+    value && initializeElectronStorage();
   }
 
   /**
    * Defaults to true to enable all electron applications store preferences at the default preferred location
    *
-   * @returns {boolean} true if `useElectronStorage` option or `setUseElectronStorage()` was explicitly set
+   * @returns {boolean} true if `useElectronStorage` option or `setUseElectronStorage(true)` was explicitly set
    */
   function isUsingElectronStorage() {
     return useElectronStorage;
+  }
+
+  /**
+   * Sets the file path to use in Electron applications
+   *
+   * @param {string} filePath the file path to be appended to the preferred electron storage directory. Must point to a valid file with an extension (preferably .json)
+   * @throws  `IllegalStateError`   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
+   */
+  function setElectronFilePath(filePath) {
+    if (!isUsingElectronStorage()) {
+      throw new IllegalStateError("Electron storage was not enabled or not running in an Electron application");
+    }
+    electronFilePath = filePath;
+    initializeElectronStorage();
+  }
+
+  /**
+   * @param   {string}  isAbsolute  flag indicating if the returned path should be absolute or relative
+   * @returns {string}              the file path to use in Electron applications
+   * @throws  `IllegalStateError`   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
+   */
+  function getElectronFilePath(isAbsolute) {
+    if (!isUsingElectronStorage()) {
+      throw new IllegalStateError("Electron storage was not enabled or not running in an Electron application");
+    }
+    return path.normalize(isAbsolute ? path.join(app.getPath("userData"), electronFilePath) : electronFilePath);
   }
 
   /**
@@ -114,8 +155,8 @@ function __exports(config = {}) {
   /**
    * Sets the default path to the preference file
    *
-   * @param {string}   filePath - the file path to persist preference
-   * @returns {string}            the file path to persist preference
+   * @param   {string}   filePath - the file path to persist preference
+   * @returns {string}              the file path to persist preference
    */
   function setDefaultPreferenceFilePath(filePath) {
     if (defaultPreferenceFilePath) {
@@ -243,7 +284,6 @@ function __exports(config = {}) {
    *
    * @param {string}   optionalFileName - an optional filename in which the corresponding file would be deleted. This can be left null
    * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the file was successfully deleted
-   *
    */
   function deleteFile_c(optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
@@ -741,6 +781,10 @@ function __exports(config = {}) {
   }
 
   const DICTIONARY = Object.freeze({
+    setElectronFilePath,
+    setUseElectronStorage,
+    isUsingElectronStorage,
+    getElectronFilePath,
     getDefaultPreferenceFilePath,
     getTempPreferenceOptionalFilePath,
     setDefaultPreferenceFilePath,
@@ -777,7 +821,8 @@ function __exports(config = {}) {
 }
 
 /**
- * an implementation of the API where options have to be set
+ * An implementation of the API where options have to be set. `useElectronStorage` option has to be set to false to ensure
+ * that an exception is not thrown in non-Electron applications
  *
  * @param {JSON}     config the configuration to be used in initialization
  * @returns {Function}        a function to be used in initialization
@@ -785,7 +830,8 @@ function __exports(config = {}) {
 module.exports = __exports;
 
 /**
- * a default implementation of the API, options weren't set
+ * A default implementation of the API, options weren't set. `useElectronStorage` option was enabled, disable in non-
+ * Electron applications
  *
  * @returns {JSON} the required APIs
  */

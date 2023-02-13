@@ -6,13 +6,13 @@
 
 ## Features 🌺
 
-- Universal, works for all Node JS applications
-- Little or no configurations with Electron JS
 - Code in your own style
 - Easy to setup and use
 - Synchronous functions available
-- Asynchronous functions available
+- Promise-based functions available
 - Callback-based functions available
+- Little or no configurations with Electron JS
+- Universal, works for all Node JS applications
 
 ## Getting Started ☕
 
@@ -46,6 +46,8 @@ npm i node-user-settings --save
 
 - It is recommended that you only initialize the API once and then pass the initialized instance around using **Dependency Injection**. Even though you don't do this, it's still possible that the API would work as you want because Node JS automatically caches a module after **requiring** them. But again, I wouldn't recommend you do that!
 
+- The option `useElectronStorage` has to be set to false in non-Electron applications or call `setUseElectronStorage(false)`
+
 ## Setup and Initialization 🛠️
 
 Initialization using exported method
@@ -60,7 +62,7 @@ In case you don't want to initialize `options` using exported method, initialize
 const settings = require("node-user-settings").defaults;
 ```
 
-**Please note**: You must call `settings.setDefaultPreferenceFilePath()` after using `.defaults`, else an error would be thrown
+**Please note**: You must call `settings.setDefaultPreferenceFilePath(path)` and `settings.setUseElectronStorage(false) (in non-electron applications)` after using `.defaults`, else an error would be thrown
 
 ### Options
 
@@ -84,6 +86,14 @@ The file name (without extension) used to persist preference
 
 The file extension of the file used to persist preference
 
+### `electronFilePath`
+
+A custom file path to override the default file in Electron applications
+
+### `useElectronStorage`
+
+A boolean flag to indicate if the default path to store electron preferences would be used. Defaults to true
+
 **Example**
 
 For Non-Electron JS users 💡
@@ -94,8 +104,8 @@ For Non-Electron JS users 💡
 
 ```javascript
 // preferenceFileName is optional, it defaults to a Settings.json file
-
 const settings = require("node-user-settings")({
+  /* required else an error is thrown */
   useElectronStorage: false,
   preferenceFileDir: "path/to/save/preference",
   preferenceFileName: "Settings.json",
@@ -108,8 +118,8 @@ const settings = require("node-user-settings")({
 
 ```javascript
 // using only preferenceFileName, it is required for you to input the full path to the file
-
 const settings = require("node-user-settings")({
+  /* required else an error is thrown */
   useElectronStorage: false,
   preferenceFileName: "path/to/save/preference/Settings.json"
 });
@@ -122,13 +132,14 @@ For Electron JS Users 💡
 #### Splitting paths into different units
 
 ```javascript
-// preferenceFileName is optional, it defaults to a Settings.json file
-
 const { app } = require("electron");
 const { join } = require("path");
 
 const settings = require("node-user-settings")({
-  useElectronStorage: false,
+  /* useElectronStorage can be left blank, it defaults to true */
+  useElectronStorage: true,
+  /* electronFilePath can be left blank. Defaults to  path.join("User", "Preferences", "Settings.json")*/
+  electronFilePath: "a/valid/file/path/to/a/settings/file",
   /* this is the recommended path to persist preference */
   preferenceFileDir: join(app.getPath("userData"), "User", "Preferences"),
   /* preferenceFileName is optional, it defaults to a Settings.json file */
@@ -147,7 +158,11 @@ const { join } = require("path");
 // using only preferenceFileName, it is required for you to input the full path to the file
 
 const settings = require("node-user-settings")({
-  /* this is the recommended path to persist preference */
+  /* useElectronStorage can be left blank, it defaults to true */
+  useElectronStorage: true,
+  /* electronFilePath can be left blank. Defaults to  path.join("User", "Preferences", "Settings.json")*/
+  electronFilePath: "a/valid/file/path/to/a/settings/file",
+  /* this is the recommended path to persist preference. Will be ignored if useElectronStorage is set */
   preferenceFileName: join(app.getPath("userData"), "User", "Preferences", "Settings.json")
 });
 ```
@@ -171,7 +186,7 @@ const path = settings.getDefaultPreferenceFilePath();
 console.log(path);
 ```
 
-### `  getTempPreferenceOptionalFilePath()`
+### `getTempPreferenceOptionalFilePath()`
 
 Gets the optional save path to the preference, if an optional file path was previously specified
 
@@ -214,6 +229,86 @@ _A String_. The default save path to the preference
 ```javascript
 const path = settings.setDefaultPreferenceFilePath("path/to/save/preference");
 console.log(path);
+```
+
+### `setUseElectronStorage(value)`
+
+Sets a flag indicating usage of the default Electron application preferred settings location
+
+### Parameter
+
+---
+
+### value
+
+#### Type: `Boolean`
+
+Flag to enable storage in the default electron storage folder
+
+**Example**
+
+```javascript
+settings.setUseElectronStorage(true);
+```
+
+### `isUsingElectronStorage()`
+
+Defaults to true to enable all electron applications store preferences at the default preferred location
+
+#### Returns
+
+_A Boolean_. true if `useElectronStorage` option or `setUseElectronStorage(true)` was explicitly set
+
+**Example**
+
+```javascript
+let isUsingElectronStorage = settings.isUsingElectronStorage();
+console.log(isUsingElectronStorage);
+```
+
+### `setElectronFilePath(filePath)`
+
+Sets the file path to use in Electron applications
+
+### Parameter
+
+---
+
+### filePath
+
+#### Type: `String`
+
+The file path to be appended to the preferred electron storage directory. Must point to a valid file with an extension (preferably .json)
+
+**Example**
+
+```javascript
+settings.setElectronFilePath("a/valid/file/path/to/a/settings/file");
+```
+
+### `getElectronFilePath()`
+
+Retrieves the absolute file path to use in Electron applications
+
+### Parameter
+
+---
+
+### isAbsolute
+
+#### Type: `String`
+
+Flag indicating if the returned path should be absolute or relative
+
+#### Returns
+
+_A String_. the file path to use in Electron applications
+
+**Example**
+
+```javascript
+let electronFilePath = settings.getElectronFilePath(true);
+console.log(electronFilePath);
 ```
 
 ## Promise-based Method 💡
