@@ -20,8 +20,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- **/
+*
+**/
 
 "use-strict";
 
@@ -30,6 +30,7 @@ const fsp = require("fs/promises");
 const fs = require("fs");
 const Constants = require("./pref-constants");
 const { checkArgs, checkArgsP } = require("./util");
+let electron;
 
 const { InitializationError, IllegalStateError, IllegalArgumentError, UnModifiableStateError } = require("./error");
 
@@ -59,11 +60,11 @@ function __exports(config = {}) {
   }
 
   function initializeElectronStorage() {
-    const { app } = require("electron");
-    let directory = app.getPath("userData");
-    let filePath = electronFilePath || path.join("User", "Preferences", "Settings.json");
+      electron = require("electron");
+      let directory = electron.app.getPath("userData");
+      let filePath = electronFilePath || path.join("User", "Preferences", "Settings.json");
 
-    setDefaultPreferenceFilePath(path.join(directory, filePath));
+      setDefaultPreferenceFilePath(path.join(directory, filePath));
   }
 
   //---------------------------------//
@@ -128,7 +129,7 @@ function __exports(config = {}) {
     if (!isUsingElectronStorage()) {
       throw new IllegalStateError("Electron storage was not enabled or not running in an Electron application");
     }
-    return path.normalize(isAbsolute ? path.join(app.getPath("userData"), electronFilePath) : electronFilePath);
+    return path.normalize(isAbsolute ? path.join(electron.app.getPath("userData"), electronFilePath) : electronFilePath);
   }
 
   /**
@@ -544,7 +545,7 @@ function __exports(config = {}) {
    */
   async function getStates(states, optionalFileName) {
     await checkArgsP(optionalFileName);
-    if (!states instanceof Array) throw new IllegalArgumentError("states must be a qualified Array object");
+    if (!(states instanceof Array)) throw new IllegalArgumentError("states must be a qualified Array object");
 
     const preferenceOb = await getPreferences(optionalFileName);
     let values = states.map((key) => `${preferenceOb[`${key}`]}`);
@@ -561,7 +562,7 @@ function __exports(config = {}) {
    */
   function getStatesSync(states, optionalFileName) {
     checkArgs(optionalFileName);
-    if (!states instanceof Array) {
+    if (!(states instanceof Array)) {
       throw new IllegalArgumentError("states must be a qualified Array object");
     }
     const preferenceOb = getPreferencesSync(optionalFileName);
@@ -579,7 +580,7 @@ function __exports(config = {}) {
    */
   function getStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
-    if (!states instanceof Array) return callbackfn(new IllegalArgumentError("states must be a qualified Array object"));
+    if (!(states instanceof Array)) return callbackfn(new IllegalArgumentError("states must be a qualified Array object"));
 
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
@@ -653,7 +654,7 @@ function __exports(config = {}) {
    */
   async function setStates(states, optionalFileName) {
     await checkArgsP(optionalFileName);
-    if (!states instanceof Object) throw new IllegalArgumentError("states must be a qualified JSON object");
+    if (!(states instanceof Object)) throw new IllegalArgumentError("states must be a qualified JSON object");
 
     let preferenceOb = await getPreferences(optionalFileName);
     let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
@@ -671,7 +672,7 @@ function __exports(config = {}) {
    */
   function setStatesSync(states, optionalFileName) {
     checkArgs(optionalFileName);
-    if (!states instanceof Object) {
+    if (!(states instanceof Object)) {
       throw new IllegalArgumentError("states must be a qualified JSON object");
     }
     let preferenceOb = getPreferencesSync(optionalFileName);
@@ -690,7 +691,7 @@ function __exports(config = {}) {
   function setStates_c(states, optionalFileName, callbackfn) {
     checkArgs(optionalFileName);
 
-    if (!states instanceof Object) {
+    if (!(states instanceof Object)) {
       return callbackfn(new IllegalArgumentError("states must be a qualified JSON object"));
     }
 

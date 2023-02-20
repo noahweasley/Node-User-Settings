@@ -8,7 +8,15 @@
     "test": "jest",
     "debug": "jest --detectOpenHandles --forceExit",
     "clear": "jest --clearCache",
-    "reset": "del \"examples\\*.json\""
+    "reset": "del \"examples\\*.json\"",
+    "prettier:base": "prettier --ignore-path .gitignore",
+    "eslint:base": "eslint --ignore-path .gitignore",
+    "lint:eslint": "npm run eslint:base -- --max-warnings 0 \"**/*.{js,ts,tsx,mdx}\"",
+    "lint:eslint-config-prettier": "eslint --print-config .eslintrc | eslint-config-prettier-check",
+    "lint": "npm run lint:eslint",
+    "format:prettier": "npm run prettier:base -- --write \"**/*.{js,ts,tsx,json,md,mdx}\"",
+    "format:eslint": "npm run eslint:base -- --fix \"**/*.{js,ts,tsx,mdx}\"",
+    "format": "npm run format:eslint && npm run format:prettier"
   },
   "keywords": [
     "settings",
@@ -36,6 +44,8 @@
   "devDependencies": {
     "dotenv": "^16.0.3",
     "electron": "^22.1.0",
-    "jest": "^29.3.1"
+    "eslint": "^8.34.0",
+    "jest": "^29.3.1",
+    "prettier": "2.8.4"
   }
 }

@@ -30,7 +30,7 @@ describe("General settings api tests", () => {
     expect(path).toBe(process.env.NODE_USER_SETTINGS_FILE_PATH);
   });
 
-  test("", () => {
+  test("throws an exception while trying to use electron storage in non-Electron js application", () => {
     const settings = require("../src/index").defaults;
     expect(() => settings.getState("moduleName")).toThrowError();
   });
