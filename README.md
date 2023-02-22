@@ -1,6 +1,6 @@
 # Node User Settings
 
-![License](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)
+![License](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings) <a href="https://www.patreon.com/noahweasley"><img src="https://img.shields.io/badge/sponsor-patreon-blue" alt="Patreon" /></a>
 
 > A universal but simple node library to implement user settings, built to work with Electron.js with little or no configurations at all
 
