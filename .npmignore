@@ -4,6 +4,7 @@ debug
 release-notes.txt
 /coverage
 target
+release-notes.md
 # npm ignore
 .github
 .vscode
