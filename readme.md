@@ -1,12 +1,12 @@
 # Node User Settings
 
-![License](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings) <a href="https://www.patreon.com/noahweasley"><img src="https://img.shields.io/badge/sponsor-patreon-blue" alt="Patreon" /></a>
+![License](https://img.shields.io/npm/l/node-user-settings?color=yellow) ![Release](https://img.shields.io/github/v/release/noahweasley/node-user-settings?color=informational&include_prereleases) ![NPM Downloads](https://img.shields.io/npm/dw/node-user-settings)
 
 > A universal but simple node library to implement user settings, built to work with Electron.js with little or no configurations at all
 
 ## Features 🌺
 
-- Code in your own style
+- Flexibility - code in your own style
 - Easy to setup and use
 - Synchronous functions available
 - Promise-based functions available
@@ -27,26 +27,6 @@ npm i node-user-settings --save
 ### API Usage 📝
 
 ---
-
-### Please Note 🚨
-
-- For now, callback-based methods naming are weird, I know. I am going to fix it in a major release; in the future.
-
-- You can specify an optional filename in which settings would be saved or retrieved. An optional filename isn't required and can be left blank.
-
-- A new preference file would be created after using the `optionalFileName` argument, with the persisted preference in it.
-
-- Adding a sync as suffix to the promise-based functions, provides you with it's synchronous alternatives.
-
-- `preferenceFileName` is no longer deprecated as of v1.5.0. Use `preferenceDir`, `fileName` and `fileExt` to set the file name to be used to persist settings, if you want to split the preference directory, filename and extension.
-
-- Specifying only `preferenceFileName` in `options` is the same as calling `settings.setDefaultPreferenceFilePath()`
-
-- Leaving `fileExt` config option blank but setting a `fileName`, results in a file with the `.json` file extension.
-
-- It is recommended that you only initialize the API once and then pass the initialized instance around using **Dependency Injection**. Even though you don't do this, it's still possible that the API would work as you want because Node JS automatically caches a module after **requiring** them. But again, I wouldn't recommend you do that!
-
-- The option `useElectronStorage` has to be set to false in non-Electron applications or call `setUseElectronStorage(false)`
 
 ## Setup and Initialization 🛠️
 

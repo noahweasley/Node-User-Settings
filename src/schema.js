@@ -23,13 +23,4 @@
  *
  **/
 
- "use-strict";
-
-const Constants = Object.freeze({
-  PREFERENCE_FILE_NAME: "Settings.json",
-  FILE_NAME: "Settings",
-  FILE_EXT: "json",
-  RETRY_TIMEOUT: 3000
-});
-
-module.exports = Constants;
+"use-strict";

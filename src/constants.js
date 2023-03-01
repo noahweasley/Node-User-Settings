@@ -25,56 +25,11 @@
 
 "use-strict";
 
-/**
- * Error in module initialization
- */
-class InitializationError extends Error {
-  /**
-   * @param {string} message the error message
-   */
-  constructor(message) {
-    super(message);
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
+const Constants = Object.freeze({
+  PREFERENCE_FILE_NAME: "Settings.json",
+  FILE_NAME: "Settings",
+  FILE_EXT: "json",
+  RETRY_TIMEOUT: 3000
+});
 
-/**
- * Error in arguments
- */
-class IllegalArgumentError extends Error {
-  /**
-   * @param {string} message the error message
-   */
-  constructor(message) {
-    super(message);
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-/**
- * Error in preference state
- */
-class IllegalStateError extends Error {
-  /**
-   * @param {string} message the error message
-   */
-  constructor(message) {
-    super(message);
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-/**
- * Error while modifying state
- */
-class UnModifiableStateError extends Error {
-  /**
-   * @param {string} message the error message
-   */
-  constructor(message) {
-    super(message);
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-module.exports = { InitializationError, IllegalStateError, IllegalArgumentError, UnModifiableStateError };
+module.exports = Constants;

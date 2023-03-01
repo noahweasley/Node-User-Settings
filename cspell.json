@@ -1,16 +1,9 @@
 {
-    "version": "0.2",
-    "ignorePaths": [],
-    "dictionaryDefinitions": [],
-    "dictionaries": [],
-    "words": [
-        "buymeacoffee",
-        "dosini",
-        "EPERM",
-        "linebreak",
-        "noahweasley",
-        "Parens"
-    ],
-    "ignoreWords": [],
-    "import": []
+  "version": "0.2",
+  "ignorePaths": [],
+  "dictionaryDefinitions": [],
+  "dictionaries": [],
+  "words": ["buymeacoffee", "dosini", "EPERM", "linebreak", "noahweasley", "Parens"],
+  "ignoreWords": [],
+  "import": []
 }

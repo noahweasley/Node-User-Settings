@@ -6,8 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "jest",
-    "debug": "jest --detectOpenHandles --forceExit",
-    "clear": "jest --clearCache",
+    "test:debug": "jest --detectOpenHandles --forceExit",
+    "test:clear": "jest --clearCache",
     "reset": "del \"examples\\*.json\"",
     "prettier:base": "prettier --ignore-path .gitignore",
     "eslint:base": "eslint --ignore-path .gitignore",
@@ -38,8 +38,8 @@
   },
   "license": "MIT",
   "funding": {
-    "type": "buymeacoffee",
-    "url": "https://www.buymeacoffee.com/noahweasley"
+    "type": "patreon",
+    "url": "https://www.patreon.com/noahweasley"
   },
   "devDependencies": {
     "dotenv": "^16.0.3",

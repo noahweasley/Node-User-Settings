@@ -1,8 +1,8 @@
 {
-    "moduleName": "node-user-settings",
-    "version": "1.0.0",
-    "author": "noahweasley",
-    "job": "Front-end Engineer",
-    "language": "Javascript",
-    "runtime": "NodeJS"
+  "moduleName": "node-user-settings",
+  "version": "1.0.0",
+  "author": "noahweasley",
+  "job": "Front-end Engineer",
+  "language": "Javascript",
+  "runtime": "NodeJS"
 }

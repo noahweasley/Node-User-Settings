@@ -1,5 +1,15 @@
 {
-    "workbench.colorTheme": "Community Material Theme Darker High Contrast",
-    "git.ignoreLimitWarning": true,
-    "explorer.excludeGitIgnore": true,
+  "workbench.colorTheme": "Community Material Theme Darker High Contrast",
+  "git.ignoreLimitWarning": true,
+  "explorer.excludeGitIgnore": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.rulers": [125],
+    "editor.tabSize": 5
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "discord.enabled": false,
+  "jest.autoRun": {}
 }

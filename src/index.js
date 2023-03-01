@@ -20,19 +20,21 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
-*
-**/
+ *
+ **/
 
 "use-strict";
+
+const { requireFunction, validateObject, validateStrings, validateArray } = require("./util");
 
 const path = require("path");
 const fsp = require("fs/promises");
 const fs = require("fs");
-const Constants = require("./pref-constants");
-const { checkArgs, checkArgsP } = require("./util");
+const Constants = require("./constants");
+
 let electron;
 
-const { InitializationError, IllegalStateError, IllegalArgumentError, UnModifiableStateError } = require("./error");
+const { InitializationError, IllegalStateError, UnModifiableStateError } = require("./error");
 
 function __exports(config = {}) {
   let { preferenceFileDir, preferenceFileName, fileName, fileExt, electronFilePath, useElectronStorage = true } = config;
@@ -60,11 +62,11 @@ function __exports(config = {}) {
   }
 
   function initializeElectronStorage() {
-      electron = require("electron");
-      let directory = electron.app.getPath("userData");
-      let filePath = electronFilePath || path.join("User", "Preferences", "Settings.json");
+    electron = require("electron");
+    let directory = electron.app.getPath("userData");
+    let filePath = electronFilePath || path.join("User", "Preferences", "Settings.json");
 
-      setDefaultPreferenceFilePath(path.join(directory, filePath));
+    setDefaultPreferenceFilePath(path.join(directory, filePath));
   }
 
   //---------------------------------//
@@ -109,8 +111,8 @@ function __exports(config = {}) {
   /**
    * Sets the file path to use in Electron applications
    *
-   * @param {string} filePath the file path to be appended to the preferred electron storage directory. Must point to a valid file with an extension (preferably .json)
-   * @throws  `IllegalStateError`   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
+   * @param {string} filePath       the file path to be appended to the preferred electron storage directory. Must point to a valid file with an extension (preferably .json)
+   * @throws  {IllegalStateError}   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
    */
   function setElectronFilePath(filePath) {
     if (!isUsingElectronStorage()) {
@@ -123,7 +125,7 @@ function __exports(config = {}) {
   /**
    * @param   {string}  isAbsolute  flag indicating if the returned path should be absolute or relative
    * @returns {string}              the file path to use in Electron applications
-   * @throws  `IllegalStateError`   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
+   * @throws  {IllegalStateError}   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
    */
   function getElectronFilePath(isAbsolute) {
     if (!isUsingElectronStorage()) {
@@ -160,6 +162,8 @@ function __exports(config = {}) {
    * @returns {string}              the file path to persist preference
    */
   function setDefaultPreferenceFilePath(filePath) {
+    validateStrings(filePath);
+
     if (defaultPreferenceFilePath) {
       throw new UnModifiableStateError("Default Preference file path has already been set and cannot be changed");
     } else {
@@ -189,6 +193,7 @@ function __exports(config = {}) {
    * @returns {Promise<boolean>}                    a Promise that resolves to a boolean indicating if it was persisted
    */
   async function serialize(preferenceOb, optionalFileName) {
+    validateStrings(optionalFileName);
     return await setPreferences(preferenceOb, optionalFileName);
   }
 
@@ -199,7 +204,9 @@ function __exports(config = {}) {
    * @param {string}   optionalFileName  - an optional filename used to persist the settings. This can be left _null_
    * @param {Function} callbackfn        - a Node-Js qualified callback with any IllegalArgumentError that occurred as the first argument and a boolean as the second argument, indicating if the file was successfully persisted
    */
-  function serialize_c(preferenceOb, optionalFileName, callbackfn) {
+  function serialize_c(preferenceOb, optionalFileName, callbackfn = requireFunction) {
+    validateObject(preferenceOb);
+    optionalFileName && validateStrings(optionalFileName);
     setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn);
   }
 
@@ -211,6 +218,8 @@ function __exports(config = {}) {
    * @returns {boolean}                    true if it was persisted
    */
   function serializeSync(preferenceOb, optionalFileName) {
+    validateObject(preferenceOb);
+    optionalFileName && validateStrings(optionalFileName);
     return setPreferencesSync(preferenceOb, optionalFileName);
   }
 
@@ -221,6 +230,7 @@ function __exports(config = {}) {
    * @returns {Promise<string>}                    a Promise that resolves to the persisted object as it exists in preference
    */
   async function deserialize(optionalFileName) {
+    optionalFileName && validateStrings(optionalFileName);
     return JSON.stringify(await getPreferences(optionalFileName));
   }
 
@@ -231,6 +241,7 @@ function __exports(config = {}) {
    * @returns {string}                    the persisted object as it exists in preference
    */
   function deserializeSync(optionalFileName) {
+    optionalFileName && validateStrings(optionalFileName);
     return JSON.stringify(getPreferencesSync(optionalFileName));
   }
 
@@ -241,7 +252,7 @@ function __exports(config = {}) {
    * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first
    *                                      argument and a string as the second argument, representing the data that was deserialized and retrieved
    */
-  function deserialize_c(optionalFileName, callbackfn) {
+  function deserialize_c(optionalFileName, callbackfn = requireFunction) {
     getPreferencesWithCallback(optionalFileName, callbackfn);
   }
 
@@ -269,7 +280,7 @@ function __exports(config = {}) {
    * @returns {boolean}                    a boolean indicating if the file was deleted
    */
   function deleteFileSync(optionalFileName) {
-    checkArgs(optionalFileName);
+    validateStrings(optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
@@ -286,15 +297,15 @@ function __exports(config = {}) {
    * @param {string}   optionalFileName - an optional filename in which the corresponding file would be deleted. This can be left null
    * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the file was successfully deleted
    */
-  function deleteFile_c(optionalFileName, callbackfn) {
-    checkArgs(optionalFileName);
+  function deleteFile_c(optionalFileName, callbackfn = requireFunction) {
+    validateStrings(optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
     fs.unlink(filePath, (err) => callbackfn(err, err ? false : true));
   }
 
   // asynchronously read the preference file from disk and then return an object representation of the file
   async function getPreferences(optionalFileName) {
-    await checkArgsP(optionalFileName);
+    optionalFileName && validateStrings(optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
@@ -322,11 +333,8 @@ function __exports(config = {}) {
           await fsp.mkdir(preferenceFileDir, {
             recursive: true
           });
-        } catch (err) {
-          // ignored
-        } finally {
-          return {};
-        }
+          // eslint-disable-next-line no-empty
+        } catch (err) {}
       }
 
       return {};
@@ -335,7 +343,7 @@ function __exports(config = {}) {
 
   // synchronously reads the preference file from disk and then return an object representation of the file
   function getPreferencesSync(optionalFileName) {
-    checkArgs(optionalFileName);
+    optionalFileName && validateStrings(optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
 
     try {
@@ -361,8 +369,9 @@ function __exports(config = {}) {
   }
 
   // asynchronously reads the preference file from disk and then return an object representation of the file
-  function getPreferencesWithCallback(optionalFileName, callbackfn) {
-    checkArgs(optionalFileName);
+  function getPreferencesWithCallback(optionalFileName, callbackfn = requireFunction) {
+    optionalFileName && validateStrings(optionalFileName);
+
     let filePath = getPreferenceFilePath(optionalFileName);
 
     fs.readFile(filePath, function (err, data) {
@@ -399,7 +408,9 @@ function __exports(config = {}) {
 
   // asynchronously writes to file, the JSON object specified by *preferenceOb*
   async function setPreferences(preferenceOb, optionalFileName) {
-    await checkArgsP(preferenceOb, optionalFileName);
+    validateObject(preferenceOb);
+    optionalFileName && validateStrings(optionalFileName);
+
     let filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(preferenceOb);
 
@@ -413,7 +424,6 @@ function __exports(config = {}) {
 
   // synchronously writes to file, the JSON object specified by *preferenceOb*
   function setPreferencesSync(preferenceOb, optionalFileName) {
-    checkArgs(preferenceOb, optionalFileName);
     let filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(preferenceOb);
 
@@ -427,7 +437,9 @@ function __exports(config = {}) {
 
   // asynchronously writes to file, the JSON object specified by "preferenceOb"
   function setPreferencesWithCallback(preferenceOb, optionalFileName, callbackfn) {
-    checkArgs(preferenceOb, optionalFileName);
+    validateObject(preferenceOb);
+    validateStrings(optionalFileName);
+
     const filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(preferenceOb);
 
@@ -442,7 +454,8 @@ function __exports(config = {}) {
    * @returns {Promise<boolean}                    a Promise that resolves to a boolean; indicating if the key exists in the persisted preference
    */
   async function hasKey(key, optionalFileName) {
-    await checkArgsP(key);
+    validateStrings(key, optionalFileName);
+
     let preferenceOb = await getPreferences(optionalFileName);
     return Object.keys(preferenceOb).includes(key);
   }
@@ -455,7 +468,9 @@ function __exports(config = {}) {
    * @returns {boolean}                    a boolean; indicating if the key exists in the persisted preference
    */
   function hasKeySync(key, optionalFileName) {
-    checkArgs(key);
+    validateStrings(key);
+    optionalFileName && validateStrings(optionalFileName);
+
     let preferenceOb = getPreferencesSync(optionalFileName);
     return Object.keys(preferenceOb).includes(key);
   }
@@ -468,7 +483,9 @@ function __exports(config = {}) {
    * @param {Function}  callbackfn          - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the key exists in the persisted preference
    */
   function hasKey_c(key, optionalFileName, callbackfn) {
-    checkArgs(key);
+    validateStrings(key);
+    optionalFileName && validateStrings(optionalFileName);
+
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) callbackfn(err);
       else callbackfn(null, Object.keys(preferenceOb).includes(key));
@@ -484,8 +501,10 @@ function __exports(config = {}) {
    * @returns {Promise<string>}                     a Promise that resolves to a string. The value which was mapped to the key specified
    */
   async function getState(key, defaultValue, optionalFileName) {
-    await checkArgsP(key, optionalFileName);
-    // first check if key exists
+    validateStrings(key);
+    defaultValue && validateStrings(defaultValue);
+    optionalFileName && validateStrings(optionalFileName);
+
     if (await hasKey(key, optionalFileName)) {
       const preferenceOb = await getPreferences(optionalFileName);
       return `${preferenceOb[`${key}`]}`;
@@ -504,7 +523,10 @@ function __exports(config = {}) {
    * @returns {string}                     the value which was mapped to the key specified
    */
   function getStateSync(key, defaultValue, optionalFileName) {
-    checkArgs(key, optionalFileName);
+    validateStrings(key);
+    defaultValue && validateStrings(defaultValue);
+    optionalFileName && validateStrings(optionalFileName);
+
     // first check if key exists
     if (hasKeySync(key, optionalFileName)) {
       const preferenceOb = getPreferencesSync(optionalFileName);
@@ -520,8 +542,10 @@ function __exports(config = {}) {
    * @param {*}        defaultValue      - the default value to be retrieved if that key has never been set
    * @param {Function} callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a string as the second argument, representing the value which was mapped to the key specified
    */
-  function getState_c(key, defaultValue, optionalFileName, callbackfn) {
-    checkArgs(optionalFileName);
+  function getState_c(key, defaultValue, optionalFileName, callbackfn = requireFunction) {
+    validateStrings(key);
+    defaultValue && validateStrings(defaultValue);
+    optionalFileName && validateStrings(optionalFileName);
 
     hasKey_c(key, optionalFileName, function (err1, hasKey) {
       if (err1) {
@@ -544,8 +568,8 @@ function __exports(config = {}) {
    * @returns {Promise<string[]>}                     a Promise that resolves an Array; A list of all the values that were retrieved
    */
   async function getStates(states, optionalFileName) {
-    await checkArgsP(optionalFileName);
-    if (!(states instanceof Array)) throw new IllegalArgumentError("states must be a qualified Array object");
+    validateStrings(optionalFileName);
+    validateArray(states);
 
     const preferenceOb = await getPreferences(optionalFileName);
     let values = states.map((key) => `${preferenceOb[`${key}`]}`);
@@ -561,10 +585,9 @@ function __exports(config = {}) {
    * @returns {string[]}                    a list of all the values that were retrieved
    */
   function getStatesSync(states, optionalFileName) {
-    checkArgs(optionalFileName);
-    if (!(states instanceof Array)) {
-      throw new IllegalArgumentError("states must be a qualified Array object");
-    }
+    validateStrings(optionalFileName);
+    validateArray(states);
+
     const preferenceOb = getPreferencesSync(optionalFileName);
     let values = states.map((key) => `${preferenceOb[`${key}`]}`);
 
@@ -578,9 +601,9 @@ function __exports(config = {}) {
    * @param {string[]} states           - an array of keys of which values would be retrieved
    * @param {Function} callbackfn       - a qualified callback function with error as the first argument and an array as the second argument, representing a list of all the values that were retrieved
    */
-  function getStates_c(states, optionalFileName, callbackfn) {
-    checkArgs(optionalFileName);
-    if (!(states instanceof Array)) return callbackfn(new IllegalArgumentError("states must be a qualified Array object"));
+  function getStates_c(states, optionalFileName, callbackfn = requireFunction) {
+    validateStrings(optionalFileName);
+    validateArray(states);
 
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
@@ -601,7 +624,9 @@ function __exports(config = {}) {
    * @returns {boolean}                     true if the operation was successful
    */
   function setStateSync(key, value, optionalFileName) {
-    checkArgs(key, optionalFileName);
+    validateStrings(key);
+    optionalFileName && validateStrings(optionalFileName);
+
     let preferenceOb = getPreferencesSync(optionalFileName);
 
     preferenceOb[`${key}`] = `${value}`;
@@ -617,7 +642,9 @@ function __exports(config = {}) {
    * @returns {Promise<boolean>}                    a Promise that resolves to a boolean; indicating if the operation was successful or not
    */
   async function setState(key, value, optionalFileName) {
-    await checkArgsP(key, optionalFileName);
+    validateStrings(key);
+    optionalFileName && validateStrings(optionalFileName);
+
     let preferenceOb = await getPreferences(optionalFileName);
     preferenceOb[`${key}`] = `${value}`;
 
@@ -632,8 +659,9 @@ function __exports(config = {}) {
    * @param {*}         value             - the value to be set and mapped to the key
    * @param {Function}  callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the operation was successful or not
    */
-  function setState_c(key, value, optionalFileName, callbackfn) {
-    checkArgs(key, optionalFileName);
+  function setState_c(key, value, optionalFileName, callbackfn = requireFunction) {
+    validateStrings(key);
+    optionalFileName && validateStrings(optionalFileName);
 
     getPreferencesWithCallback(optionalFileName, function (err, preferenceOb) {
       if (err) {
@@ -653,8 +681,8 @@ function __exports(config = {}) {
    * @returns {Promise<string[]>}                     a Promise that resolves an Array; list of all the values that were persisted / set
    */
   async function setStates(states, optionalFileName) {
-    await checkArgsP(optionalFileName);
-    if (!(states instanceof Object)) throw new IllegalArgumentError("states must be a qualified JSON object");
+    validateObject(states);
+    validateStrings(optionalFileName);
 
     let preferenceOb = await getPreferences(optionalFileName);
     let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
@@ -671,10 +699,9 @@ function __exports(config = {}) {
    * @returns {string[]}                    a list of all the values that were persisted / set
    */
   function setStatesSync(states, optionalFileName) {
-    checkArgs(optionalFileName);
-    if (!(states instanceof Object)) {
-      throw new IllegalArgumentError("states must be a qualified JSON object");
-    }
+    validateStrings(optionalFileName);
+    validateObject(states);
+
     let preferenceOb = getPreferencesSync(optionalFileName);
     let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
@@ -688,12 +715,9 @@ function __exports(config = {}) {
    * @param {string}   optionalFileName - an optional filename used to persist the settings. This can be left null
    * @param {Function} callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and an array as the second argument, representing a list of all the values that were persisted / set
    */
-  function setStates_c(states, optionalFileName, callbackfn) {
-    checkArgs(optionalFileName);
-
-    if (!(states instanceof Object)) {
-      return callbackfn(new IllegalArgumentError("states must be a qualified JSON object"));
-    }
+  function setStates_c(states, optionalFileName, callbackfn = requireFunction) {
+    validateStrings(optionalFileName);
+    validateObject(states);
 
     getPreferencesWithCallback(optionalFileName, function (err1, preferenceOb) {
       if (err1) {
@@ -720,7 +744,8 @@ function __exports(config = {}) {
    * @returns {Promise<boolean>}                    a Promise that resolves to a boolean; indicating if the key was successfully deleted
    */
   async function deleteKey(key, optionalFileName) {
-    await checkArgsP(key, optionalFileName);
+    validateStrings(key, optionalFileName);
+
     let preferenceOb = await getPreferences(optionalFileName);
     // check if key is present in preference
     if (await hasKey(key, optionalFileName)) {
@@ -741,7 +766,8 @@ function __exports(config = {}) {
    * @returns {boolean}                     indicating if the key was successfully deleted
    */
   function deleteKeySync(key, optionalFileName) {
-    checkArgs(key, optionalFileName);
+    validateStrings(key, optionalFileName);
+
     let preferenceOb = getPreferencesSync();
     // check if key is present in preference
     if (hasKeySync(key, optionalFileName)) {
@@ -761,8 +787,8 @@ function __exports(config = {}) {
    * @param {string}    optionalFileName - an optional filename used to persist the settings. This can be left null
    * @param {Function}  callbackfn       - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the key was successfully deleted
    */
-  function deleteKey_c(key, optionalFileName, callbackfn) {
-    checkArgs(key, optionalFileName);
+  function deleteKey_c(key, optionalFileName, callbackfn = requireFunction) {
+    validateStrings(key, optionalFileName);
 
     getPreferencesWithCallback(optionalFileName, function (err1, preferenceOb) {
       if (err1) {

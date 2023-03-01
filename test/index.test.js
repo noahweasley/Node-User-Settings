@@ -39,13 +39,13 @@ describe("General settings api tests", () => {
     expect(settings.isUsingElectronStorage()).toBe(false);
   });
 
-  // test("check if the set electronFilePath is the same, but normalized", () => {
-  //   const settings = require("../src/index").defaults;
-  //   settings.setElectronFilePath("/settings.json");
+  test("check if the set electronFilePath is the same, but normalized", () => {
+    const settings = require("../src/index").defaults;
+    settings.setElectronFilePath("/settings.json");
 
-  //   let electronFilePath = settings.getElectronFilePath();
-  //   expect(electronFilePath).toBe(path.normalize("/settings.json"));
-  // });
+    let electronFilePath = settings.getElectronFilePath();
+    expect(electronFilePath).toBe(path.normalize("/settings.json"));
+  });
 });
 
 describe("Promise-based settings api tests", () => {
