@@ -23,8 +23,6 @@
  *
  **/
 
-"use-strict";
-
 const { requireFunction, validateObject, validateStrings, validateArray } = require("./util");
 
 const path = require("path");
