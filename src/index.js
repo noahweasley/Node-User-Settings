@@ -109,8 +109,8 @@ function __exports(config = {}) {
   /**
    * Sets the file path to use in Electron applications
    *
-   * @param {string} filePath       the file path to be appended to the preferred electron storage directory. Must point to a valid file with an extension (preferably .json)
-   * @throws  {IllegalStateError}   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
+   * @param 	{string} 						filePath  the file path to be appended to the preferred electron storage directory. Must point to a valid file with an extension (preferably .json)
+   * @throws  {IllegalStateError}   				if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
    */
   function setElectronFilePath(filePath) {
     if (!isUsingElectronStorage()) {
@@ -121,9 +121,9 @@ function __exports(config = {}) {
   }
 
   /**
-   * @param   {string}  isAbsolute  flag indicating if the returned path should be absolute or relative
-   * @returns {string}              the file path to use in Electron applications
-   * @throws  {IllegalStateError}   if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
+   * @param   {string}  					isAbsolute  flag indicating if the returned path should be absolute or relative
+   * @returns {string}        					      the file path to use in Electron applications
+   * @throws  {IllegalStateError}   					if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
    */
   function getElectronFilePath(isAbsolute) {
     if (!isUsingElectronStorage()) {
@@ -186,8 +186,8 @@ function __exports(config = {}) {
   /**
    * Asynchronously replaces all data in preference
    *
-   * @param {JSON}               preferenceOb     - a JSON object to be serialized and persisted
-   * @param {string}             optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @param 	{JSON}              preferenceOb     - a JSON object to be serialized and persisted
+   * @param 	{string}            optionalFileName - an optional filename used to persist the settings. This can be left null
    * @returns {Promise<boolean>}                    a Promise that resolves to a boolean indicating if it was persisted
    */
   async function serialize(preferenceOb, optionalFileName) {
@@ -211,8 +211,8 @@ function __exports(config = {}) {
   /**
    * Synchronously replaces all data in preference
    *
-   * @param {JSON}      preferenceOb     - a JSON object to be serialized and persisted
-   * @param {string}    optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @param 	{JSON}     preferenceOb     - a JSON object to be serialized and persisted
+   * @param 	{string}   optionalFileName - an optional filename used to persist the settings. This can be left null
    * @returns {boolean}                    true if it was persisted
    */
   function serializeSync(preferenceOb, optionalFileName) {
@@ -224,7 +224,7 @@ function __exports(config = {}) {
   /**
    * Asynchronously retrieves all the data in preference
    *
-   * @param {string}            optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @param 	{string}            optionalFileName - an optional filename used to persist the settings. This can be left null
    * @returns {Promise<string>}                    a Promise that resolves to the persisted object as it exists in preference
    */
   async function deserialize(optionalFileName) {
@@ -235,7 +235,7 @@ function __exports(config = {}) {
   /**
    * Synchronously retrieves all the data in preference
    *
-   * @param {string}   optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @param 	{string}   optionalFileName - an optional filename used to persist the settings. This can be left null
    * @returns {string}                    the persisted object as it exists in preference
    */
   function deserializeSync(optionalFileName) {
@@ -257,8 +257,8 @@ function __exports(config = {}) {
   /**
    * Asynchronously deletes the preference file
    *
-   * @param {string}              optionalFileName -  an optional filename in which the corresponding file would be deleted. This can be left null
-   * @returns {Promise<boolean>}                      a Promise that resolves to a boolean, indicating if the file was deleted
+   * @param 	{string}            optionalFileName - an optional filename in which the corresponding file would be deleted. This can be left null
+   * @returns {Promise<boolean>}                     a Promise that resolves to a boolean, indicating if the file was deleted
    */
   async function deleteFile(optionalFileName) {
     let filePath = getPreferenceFilePath(optionalFileName);
@@ -274,8 +274,8 @@ function __exports(config = {}) {
   /**
    * Synchronously deletes the preference file
    *
-   * @param {string}    optionalFileName - an optional filename in which the corresponding file would be deleted. This can be left null
-   * @returns {boolean}                    a boolean indicating if the file was deleted
+   * @param 	{string}    optionalFileName - an optional filename in which the corresponding file would be deleted. This can be left null
+   * @returns {boolean}                 	   a boolean indicating if the file was deleted
    */
   function deleteFileSync(optionalFileName) {
     validateStrings(optionalFileName);
@@ -447,9 +447,9 @@ function __exports(config = {}) {
   /**
    * Asynchronously checks if a key exists
    *
-   * @param {string}            key              - the key in the preference in which it's value would be checked for it's existence
-   * @param {string}            optionalFileName - an optional filename used to do the check. This can be left null
-   * @returns {Promise<boolean}                    a Promise that resolves to a boolean; indicating if the key exists in the persisted preference
+   * @param	  {string}           key              - the key in the preference in which it's value would be checked for it's existence
+   * @param 	{string}           optionalFileName - an optional filename used to do the check. This can be left null
+   * @returns {Promise<boolean}                     a Promise that resolves to a boolean; indicating if the key exists in the persisted preference
    */
   async function hasKey(key, optionalFileName) {
     validateStrings(key, optionalFileName);
@@ -459,11 +459,11 @@ function __exports(config = {}) {
   }
 
   /**
-   *  Synchronously checks if a key exists
+   * Synchronously checks if a key exists
    *
-   * @param {string}    key              - the key in the preference in which it's value would be checked for it's existence
-   * @param {string}    optionalFileName - an optional filename used to do the check. This can be left null
-   * @returns {boolean}                    a boolean; indicating if the key exists in the persisted preference
+   * @param 	{string}   key              - the key in the preference in which it's value would be checked for it's existence
+   * @param 	{string}   optionalFileName - an optional filename used to do the check. This can be left null
+   * @returns {boolean}                     a boolean; indicating if the key exists in the persisted preference
    */
   function hasKeySync(key, optionalFileName) {
     validateStrings(key);
@@ -476,9 +476,9 @@ function __exports(config = {}) {
   /**
    * Asynchronously checks if a key exists
    *
-   * @param {string}    key                 - the key in the preference in which it's value would be checked for it's existence
-   * @param {string}    optionalFileName    - an optional filename used to do the check. This can be left null
-   * @param {Function}  callbackfn          - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the key exists in the persisted preference
+   * @param {string}    key               - the key in the preference in which it's value would be checked for it's existence
+   * @param {string}    optionalFileName  - an optional filename used to do the check. This can be left null
+   * @param {Function}  callbackfn        - a Node-Js qualified callback with any error that occurred as the first argument and a boolean as the second argument, indicating if the key exists in the persisted preference
    */
   function hasKey_c(key, optionalFileName, callbackfn) {
     validateStrings(key);
@@ -491,12 +491,12 @@ function __exports(config = {}) {
   }
 
   /**
-   *  Gets a value asynchronously
+   * Gets a value asynchronously
    *
-   * @param {string}            optionalFileName  - an optional filename used to do the check. This can be left null
-   * @param {string}            key               - the key in the preference in which it's value would be retrieved
-   * @param {string}            defaultValue      - a default value to be used if that key has never been set
-   * @returns {Promise<string>}                     a Promise that resolves to a string. The value which was mapped to the key specified
+   * @param 	{string}            optionalFileName  - an optional filename used to do the check. This can be left null
+   * @param 	{string}            key               - the key in the preference in which it's value would be retrieved
+   * @param 	{string}            defaultValue      - a default value to be used if that key has never been set
+   * @returns {Promise<string>}                     	a Promise that resolves to a string. The value which was mapped to the key specified
    */
   async function getState(key, defaultValue, optionalFileName) {
     validateStrings(key);
@@ -515,9 +515,9 @@ function __exports(config = {}) {
   /**
    * Gets a value synchronously
    *
-   * @param {string}    optionalFileName - an optional filename used to persist the settings. This can be left null
-   * @param {*}         defaultValue     - the default value to be retrieved if that key has never been set
-   * @param {string}    key              - an optional filename used to persist the settings. This can be left null
+   * @param 	{string}    optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @param 	{*}         defaultValue     - the default value to be retrieved if that key has never been set
+   * @param 	{string}    key              - an optional filename used to persist the settings. This can be left null
    * @returns {string}                     the value which was mapped to the key specified
    */
   function getStateSync(key, defaultValue, optionalFileName) {
@@ -561,8 +561,8 @@ function __exports(config = {}) {
   /**
    *  Gets multiple value simultaneously and asynchronously
    *
-   * @param {string}               optionalFileName - an optional filename used to persist the settings. This can be left null
-   * @param {string[]}             states           - an array of keys of which values would be retrieved
+   * @param	  {string}             optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @param   {string[]}           states           - an array of keys of which values would be retrieved
    * @returns {Promise<string[]>}                     a Promise that resolves an Array; A list of all the values that were retrieved
    */
   async function getStates(states, optionalFileName) {
@@ -578,9 +578,9 @@ function __exports(config = {}) {
   /**
    * Gets multiple value simultaneously and synchronously
    *
-   * @param {string[]}   states           - an array of keys of which values would be retrieved
-   * @param {string}     optionalFileName - an optional filename used to persist the settings. This can be left null
-   * @returns {string[]}                    a list of all the values that were retrieved
+   * @param 	{string[]}   states           	- an array of keys of which values would be retrieved
+   * @param 	{string}     optionalFileName 	- an optional filename used to persist the settings. This can be left null
+   * @returns {string[]}                    	a list of all the values that were retrieved
    */
   function getStatesSync(states, optionalFileName) {
     validateStrings(optionalFileName);
@@ -594,7 +594,7 @@ function __exports(config = {}) {
 
   /**
    * Gets multiple value simultaneously and asynchronously
-   *
+/   *
    * @param {string}   optionalFileName - optional filename used to persist the settings. This can be left null
    * @param {string[]} states           - an array of keys of which values would be retrieved
    * @param {Function} callbackfn       - a qualified callback function with error as the first argument and an array as the second argument, representing a list of all the values that were retrieved
@@ -632,12 +632,12 @@ function __exports(config = {}) {
   }
 
   /**
-   *  Sets a value asynchronously
+   * Sets a value asynchronously
    *
-   * @param {string}             key              - the key in the preference in which it's value would be set
-   * @param {*}                  value            - the value to be set and mapped to the key
-   * @param {string}             optionalFileName - an optional filename used to persist the settings. This can be left null
-   * @returns {Promise<boolean>}                    a Promise that resolves to a boolean; indicating if the operation was successful or not
+   * @param 	{string}             key              - the key in the preference in which it's value would be set
+   * @param 	{*}                  value            - the value to be set and mapped to the key
+   * @param 	{string}             optionalFileName - an optional filename used to persist the settings. This can be left null
+   * @returns {Promise<boolean>}                    	a Promise that resolves to a boolean; indicating if the operation was successful or not
    */
   async function setState(key, value, optionalFileName) {
     validateStrings(key);
@@ -672,11 +672,11 @@ function __exports(config = {}) {
   }
 
   /**
-   *  asynchronously sets the states of a user preference using a JSON object containing key-value pairs
+   * asynchronously sets the states of a user preference using a JSON object containing key-value pairs
    *
-   * @param  {JSON}               states            - a map with the key-value pair to be persisted
-   * @param {string}              optionalFileName  - an optional filename used to persist the settings. This can be left null
-   * @returns {Promise<string[]>}                     a Promise that resolves an Array; list of all the values that were persisted / set
+   * @param  	{JSON}               states            - a map with the key-value pair to be persisted
+   * @param 	{string}             optionalFileName  - an optional filename used to persist the settings. This can be left null
+   * @returns {Promise<string[]>}                      a Promise that resolves an Array; list of all the values that were persisted / set
    */
   async function setStates(states, optionalFileName) {
     validateObject(states);
@@ -737,8 +737,8 @@ function __exports(config = {}) {
   /**
    * Asynchronously deletes a single entry
    *
-   * @param {string}            key               - the key in the preference in which it's value would be deleted
-   * @param {string}            optionalFileName  - an optional filename used to persist the settings. This can be left null
+   * @param 	{string}            key               - the key in the preference in which it's value would be deleted
+   * @param 	{string}            optionalFileName  - an optional filename used to persist the settings. This can be left null
    * @returns {Promise<boolean>}                    a Promise that resolves to a boolean; indicating if the key was successfully deleted
    */
   async function deleteKey(key, optionalFileName) {
@@ -759,9 +759,9 @@ function __exports(config = {}) {
   /**
    * Synchronously deletes a single entry
    *
-   * @param {string}    key               - the key in the preference in which it's value would deleted
-   * @param {string}    optionalFileName  - an optional filename used to persist the settings. This can be left null
-   * @returns {boolean}                     indicating if the key was successfully deleted
+   * @param 	{string}    key               - the key in the preference in which it's value would deleted
+   * @param 	{string}    optionalFileName  - an optional filename used to persist the settings. This can be left null
+   * @returns {boolean}                    	  indicating if the key was successfully deleted
    */
   function deleteKeySync(key, optionalFileName) {
     validateStrings(key, optionalFileName);
@@ -849,8 +849,8 @@ function __exports(config = {}) {
  * An implementation of the API where options have to be set. `useElectronStorage` option has to be set to false to ensure
  * that an exception is not thrown in non-Electron applications
  *
- * @param {JSON}     config the configuration to be used in initialization
- * @returns {Function}        a function to be used in initialization
+ * @param 	{JSON}     config - the configuration to be used in initialization
+ * @returns {Function}          a function to be used in initialization
  */
 module.exports = __exports;
 
