@@ -1,4 +1,4 @@
-## Contributing to the codebase
+# Contributing to the codebase
 
 - Clone the [repository](https://github.com/noahweasley/Node-User-Settings.git) and run `$ npm install && npm test`
 
