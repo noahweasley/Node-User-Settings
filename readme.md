@@ -20,7 +20,7 @@
 
 ---
 
-```
+```bash
 npm i node-user-settings --save
 ```
 
@@ -151,7 +151,7 @@ The _settings_ variable where module was imported and stored, is what would be u
 
 ## General Utility Method 💡
 
-### ` getDefaultPreferenceFilePath()`
+### `getDefaultPreferenceFilePath()`
 
 Gets the default save path to the preference
 
@@ -184,7 +184,7 @@ const tmpPath = settings.getTempPreferenceOptionalFilePath();
 console.log(tmpPath);
 ```
 
-### ` setDefaultPreferenceFilePath(filePath)`
+### `setDefaultPreferenceFilePath(filePath)`
 
 Sets the default path to the preference file
 
