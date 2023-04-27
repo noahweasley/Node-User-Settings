@@ -24,15 +24,14 @@
  **/
 
 const { requireFunction, validateObject, validateStrings, validateArray } = require("./util");
+const { InitializationError, IllegalStateError, UnModifiableStateError } = require("./error");
+const Constants = require("./constants");
 
 const path = require("path");
 const fsp = require("fs/promises");
 const fs = require("fs");
-const Constants = require("./constants");
 
 let electron;
-
-const { InitializationError, IllegalStateError, UnModifiableStateError } = require("./error");
 
 function __exports(config = {}) {
   let { preferenceFileDir, preferenceFileName, fileName, fileExt, electronFilePath, useElectronStorage = true } = config;
