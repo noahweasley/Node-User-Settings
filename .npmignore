@@ -9,7 +9,6 @@ release-notes.md
 .github
 .vscode
 test
-auto.bat
 /examples
 /cspell.json
 /.prettierrc.json
