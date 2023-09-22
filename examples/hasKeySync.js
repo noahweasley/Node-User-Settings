@@ -6,11 +6,11 @@ const settings = require("../src/index").defaults;
 settings.setUseElectronStorage(false);
 settings.setDefaultPreferenceFilePath("./examples/settings.json");
 
-let hasName = settings.hasKeySync("name");
+const hasName = settings.hasKeySync("name");
 
-let optionalFilename = "user-settings.json";
+const optionalFilename = "user-settings.json";
 
-let hasVersion = settings.hasKeySync("version", optionalFilename);
+const hasVersion = settings.hasKeySync("version", optionalFilename);
 
 console.log("Preference has name ? : %s", hasName);
 

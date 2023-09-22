@@ -30,7 +30,10 @@
     "app",
     "data"
   ],
-  "repository": "https://github.com/noahweasley/Node-User-Settings",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noahweasley/Node-User-Settings.git"
+  },
   "author": {
     "name": "noahweasley",
     "email": "iebenmelu@gmail.com",

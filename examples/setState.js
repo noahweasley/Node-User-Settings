@@ -7,10 +7,10 @@ settings.setUseElectronStorage(false);
 settings.setDefaultPreferenceFilePath("./examples/settings.json");
 
 (async function main() {
-  let optionalFilename = "user-settings.json";
+  const optionalFilename = "user-settings.json";
 
-  let isSet = await settings.setState("name", "Noah");
-  let isSet2 = await settings.setState("version", "1.0.0", optionalFilename);
+  const isSet = await settings.setState("name", "Noah");
+  const isSet2 = await settings.setState("version", "1.0.0", optionalFilename);
 
   console.log("is value set? %s and %s", isSet, isSet2);
 })();

@@ -21,8 +21,8 @@ module.exports.getTempFileDirectoryFromPath = function (preferenceFilePath, opti
  * @returns
  */
 module.exports.pumpPreferenceSync = function (preferenceFilePath, statesMap) {
-  let preferenceOb = {};
-  let inserted = Object.keys(statesMap).map((key) => (preferenceOb[`${key}`] = `${statesMap[`${key}`]}`));
+  const preferenceOb = {};
+  const inserted = Object.keys(statesMap).map((key) => (preferenceOb[`${key}`] = `${statesMap[`${key}`]}`));
 
   try {
     fs.writeFileSync(preferenceFilePath, JSON.stringify(preferenceOb), { encoding: "utf-8" });
@@ -42,8 +42,8 @@ module.exports.pumpPreferenceSync = function (preferenceFilePath, statesMap) {
  * @returns
  */
 module.exports.pumpPreference = async function (preferenceFilePath, statesMap) {
-  let preferenceOb = {};
-  let inserted = Object.keys(statesMap).map((key) => (preferenceOb[`${key}`] = `${statesMap[`${key}`]}`));
+  const preferenceOb = {};
+  const inserted = Object.keys(statesMap).map((key) => (preferenceOb[`${key}`] = `${statesMap[`${key}`]}`));
 
   let filehandle;
   try {
@@ -68,8 +68,8 @@ module.exports.pumpPreference = async function (preferenceFilePath, statesMap) {
  * @returns
  */
 module.exports.pumpPreference_c = function (preferenceFilePath, statesMap, callbackfn) {
-  let preferenceOb = {};
-  let inserted = Object.keys(statesMap).map((key) => (preferenceOb[`${key}`] = `${statesMap[`${key}`]}`));
+  const preferenceOb = {};
+  const inserted = Object.keys(statesMap).map((key) => (preferenceOb[`${key}`] = `${statesMap[`${key}`]}`));
 
   fs.open(preferenceFilePath, "wx+", (err, fd) => {
     if (err) {
@@ -91,6 +91,6 @@ module.exports.deleteSettingsSync = function (preferenceFilePath) {
 };
 
 module.exports.readPreference = async function (preferenceFilePath) {
-  let preference = await fsp.readFile(preferenceFilePath, { encoding: "utf-8" });
+  const preference = await fsp.readFile(preferenceFilePath, { encoding: "utf-8" });
   return JSON.parse(preference);
 };

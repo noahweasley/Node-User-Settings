@@ -11,5 +11,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "discord.enabled": false,
-  "jest.autoRun": {}
+  "jest.autoRun": {},
+  "jira-plugin.workingProject": ""
 }

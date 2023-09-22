@@ -34,6 +34,7 @@ const fs = require("fs");
 let electron;
 
 function __exports(config = {}) {
+  // eslint-disable-next-line prefer-const
   let { preferenceFileDir, preferenceFileName, fileName, fileExt, electronFilePath, useElectronStorage = true } = config;
 
   let electronStorageErrorCaught = false;
@@ -60,8 +61,8 @@ function __exports(config = {}) {
 
   function initializeElectronStorage() {
     electron = require("electron");
-    let directory = electron.app.getPath("userData");
-    let filePath = electronFilePath || path.join("User", "Preferences", "Settings.json");
+    const directory = electron.app.getPath("userData");
+    const filePath = electronFilePath || path.join("User", "Preferences", "Settings.json");
 
     setDefaultPreferenceFilePath(path.join(directory, filePath));
   }
@@ -79,7 +80,7 @@ function __exports(config = {}) {
     }
 
     if (optionalFileName) {
-      let joinedPath = path.normalize(path.join(preferenceFileDir, optionalFileName));
+      const joinedPath = path.normalize(path.join(preferenceFileDir, optionalFileName));
       return (optionalPreferenceFilePath = joinedPath);
     } else {
       return path.normalize(defaultPreferenceFilePath);
@@ -120,7 +121,7 @@ function __exports(config = {}) {
   }
 
   /**
-   * @param   {string}  					isAbsolute  flag indicating if the returned path should be absolute or relative
+   * @param   {boolean}  					isAbsolute  flag indicating if the returned path should be absolute or relative
    * @returns {string}        					      the file path to use in Electron applications
    * @throws  {IllegalStateError}   					if electron file storage was not enabled. Might also throw a generic error if not running in an Electron application
    */
@@ -260,7 +261,7 @@ function __exports(config = {}) {
    * @returns {Promise<boolean>}                     a Promise that resolves to a boolean, indicating if the file was deleted
    */
   async function deleteFile(optionalFileName) {
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
 
     try {
       await fsp.unlink(filePath);
@@ -278,7 +279,7 @@ function __exports(config = {}) {
    */
   function deleteFileSync(optionalFileName) {
     validateStrings(optionalFileName);
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
 
     try {
       fs.unlinkSync(filePath);
@@ -296,17 +297,17 @@ function __exports(config = {}) {
    */
   function deleteFile_c(optionalFileName, callbackfn = requireFunction) {
     validateStrings(optionalFileName);
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
     fs.unlink(filePath, (err) => callbackfn(err, err ? false : true));
   }
 
   // asynchronously read the preference file from disk and then return an object representation of the file
   async function getPreferences(optionalFileName) {
     optionalFileName && validateStrings(optionalFileName);
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
 
     try {
-      let data = await fsp.readFile(filePath, "utf8");
+      const data = await fsp.readFile(filePath, "utf8");
       return JSON.parse(data);
     } catch (err) {
       return createPreferenceFile();
@@ -341,10 +342,10 @@ function __exports(config = {}) {
   // synchronously reads the preference file from disk and then return an object representation of the file
   function getPreferencesSync(optionalFileName) {
     optionalFileName && validateStrings(optionalFileName);
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
 
     try {
-      let data = fs.readFileSync(filePath, "utf8");
+      const data = fs.readFileSync(filePath, "utf8");
       return JSON.parse(data);
     } catch (err) {
       return createPreferenceFileSync();
@@ -369,7 +370,7 @@ function __exports(config = {}) {
   function getPreferencesWithCallback(optionalFileName, callbackfn = requireFunction) {
     optionalFileName && validateStrings(optionalFileName);
 
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
 
     fs.readFile(filePath, function (err, data) {
       if (err) {
@@ -408,7 +409,7 @@ function __exports(config = {}) {
     validateObject(preferenceOb);
     optionalFileName && validateStrings(optionalFileName);
 
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(preferenceOb);
 
     try {
@@ -421,7 +422,7 @@ function __exports(config = {}) {
 
   // synchronously writes to file, the JSON object specified by *preferenceOb*
   function setPreferencesSync(preferenceOb, optionalFileName) {
-    let filePath = getPreferenceFilePath(optionalFileName);
+    const filePath = getPreferenceFilePath(optionalFileName);
     const preference = JSON.stringify(preferenceOb);
 
     try {
@@ -453,7 +454,7 @@ function __exports(config = {}) {
   async function hasKey(key, optionalFileName) {
     validateStrings(key, optionalFileName);
 
-    let preferenceOb = await getPreferences(optionalFileName);
+    const preferenceOb = await getPreferences(optionalFileName);
     return Object.keys(preferenceOb).includes(key);
   }
 
@@ -468,7 +469,7 @@ function __exports(config = {}) {
     validateStrings(key);
     optionalFileName && validateStrings(optionalFileName);
 
-    let preferenceOb = getPreferencesSync(optionalFileName);
+    const preferenceOb = getPreferencesSync(optionalFileName);
     return Object.keys(preferenceOb).includes(key);
   }
 
@@ -569,7 +570,7 @@ function __exports(config = {}) {
     validateArray(states);
 
     const preferenceOb = await getPreferences(optionalFileName);
-    let values = states.map((key) => `${preferenceOb[`${key}`]}`);
+    const values = states.map((key) => `${preferenceOb[`${key}`]}`);
 
     return values;
   }
@@ -586,7 +587,7 @@ function __exports(config = {}) {
     validateArray(states);
 
     const preferenceOb = getPreferencesSync(optionalFileName);
-    let values = states.map((key) => `${preferenceOb[`${key}`]}`);
+    const values = states.map((key) => `${preferenceOb[`${key}`]}`);
 
     return values;
   }
@@ -606,7 +607,7 @@ function __exports(config = {}) {
       if (err) {
         callbackfn(err);
       } else {
-        let values = states.map((key) => `${preferenceOb[`${key}`]}`);
+        const values = states.map((key) => `${preferenceOb[`${key}`]}`);
         callbackfn(null, values);
       }
     });
@@ -624,7 +625,7 @@ function __exports(config = {}) {
     validateStrings(key);
     optionalFileName && validateStrings(optionalFileName);
 
-    let preferenceOb = getPreferencesSync(optionalFileName);
+    const preferenceOb = getPreferencesSync(optionalFileName);
 
     preferenceOb[`${key}`] = `${value}`;
     return setPreferencesSync(preferenceOb, optionalFileName);
@@ -642,7 +643,7 @@ function __exports(config = {}) {
     validateStrings(key);
     optionalFileName && validateStrings(optionalFileName);
 
-    let preferenceOb = await getPreferences(optionalFileName);
+    const preferenceOb = await getPreferences(optionalFileName);
     preferenceOb[`${key}`] = `${value}`;
 
     return await setPreferences(preferenceOb, optionalFileName);
@@ -681,8 +682,8 @@ function __exports(config = {}) {
     validateObject(states);
     validateStrings(optionalFileName);
 
-    let preferenceOb = await getPreferences(optionalFileName);
-    let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
+    const preferenceOb = await getPreferences(optionalFileName);
+    const inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
     const isPreferenceSet = await setPreferences(preferenceOb, optionalFileName);
     return isPreferenceSet ? inserted : [];
@@ -699,8 +700,8 @@ function __exports(config = {}) {
     validateStrings(optionalFileName);
     validateObject(states);
 
-    let preferenceOb = getPreferencesSync(optionalFileName);
-    let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
+    const preferenceOb = getPreferencesSync(optionalFileName);
+    const inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
     return setPreferencesSync(preferenceOb, optionalFileName) ? inserted : [];
   }
@@ -720,7 +721,7 @@ function __exports(config = {}) {
       if (err1) {
         return callbackfn(err1);
       } else {
-        let inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
+        const inserted = Object.keys(states).map((key) => (preferenceOb[`${key}`] = `${states[`${key}`]}`));
 
         setPreferencesWithCallback(preferenceOb, optionalFileName, function (err2, isInserted) {
           if (isInserted) {
@@ -743,7 +744,7 @@ function __exports(config = {}) {
   async function deleteKey(key, optionalFileName) {
     validateStrings(key, optionalFileName);
 
-    let preferenceOb = await getPreferences(optionalFileName);
+    const preferenceOb = await getPreferences(optionalFileName);
     // check if key is present in preference
     if (await hasKey(key, optionalFileName)) {
       delete preferenceOb[`${key}`];
@@ -765,7 +766,7 @@ function __exports(config = {}) {
   function deleteKeySync(key, optionalFileName) {
     validateStrings(key, optionalFileName);
 
-    let preferenceOb = getPreferencesSync();
+    const preferenceOb = getPreferencesSync();
     // check if key is present in preference
     if (hasKeySync(key, optionalFileName)) {
       delete preferenceOb[`${key}`];

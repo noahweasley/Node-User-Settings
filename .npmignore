@@ -13,3 +13,4 @@ test
 /cspell.json
 /.prettierrc.json
 /.editorconfig
+/src/schema.js

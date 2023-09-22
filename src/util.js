@@ -41,7 +41,7 @@ module.exports.requireFunction = function () {
  */
 module.exports.validateStrings = function (...strings) {
   strings.forEach((string) => {
-    if (!(typeof string == "string")) {
+    if (!(typeof string === "string")) {
       throw new IllegalArgumentError(`${string} must be a String`);
     }
   });
@@ -65,9 +65,9 @@ module.exports.validateArray = function (array) {
 module.exports.validateObject = function (object, schema) {
   if (!(schema && object)) throw new IllegalArgumentError("Argument is required");
 
-  let errors = Object.keys(schema)
+  const errors = Object.keys(schema)
     .filter((key) => !schema[key](object[key]))
-    .map((key) => new IllegalArgumentError(key + " is invalid"));
+    .map((key) => new IllegalArgumentError(`${key} is invalid`));
 
   if (errors.length > 0) {
     errors.forEach((error) => {
